@@ -1,19 +1,27 @@
-let mongo = require('../db.js');
+var mongoUtil = require( './../mongoUtil' );
+let mongo = mongoUtil.getDb();
 
 const products = () => { }
 
 products.getAllProducts = () => {
+    console.log("GETTING ALL PRODUCTS")
     return new Promise((resolve, reject) => {
-        mongo.db.collection('products').find().toArray((err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
+        console.log(mongo)
+        mongo.collection("products").find({}).toArray(function(err, res) {
+            if (err) {
+                console.log(err)
+                reject(err)
+            };
+            console.log("CHUHJ")
+            console.log(result)
+            resolve(result) ;
+        });
     })
 }
 
 products.getProductById = (id) => {
     return new Promise((resolve, reject) => {
-        mongo.db.collection('products').findOne({ _id: id }, (err, result) => {
+        mongo.collection('products').findOne({ _id: id }, (err, result) => {
             if(err) reject(err)
             resolve(result)
         })
@@ -22,7 +30,7 @@ products.getProductById = (id) => {
 
 products.addProduct = (product)=>{
     return new Promise((resolve, reject) => {
-        mongo.db.collection('products').insertOne({
+        mongo.collection('products').insertOne({
             name: product.name,
             price: product.price,
             description: product.description,
@@ -38,7 +46,7 @@ products.addProduct = (product)=>{
 
 products.updateProduct = (product)=>{
     return new Promise((resolve, reject) => {
-        mongo.db.collection('products').updateOne({
+        mongo.collection('products').updateOne({
             _id: product._id
         }, {
             $set: {
@@ -58,7 +66,7 @@ products.updateProduct = (product)=>{
 
 products.buyProduct = (product)=>{
     return new Promise((resolve, reject) => {
-        mongo.db.collection('products').updateOne({
+        mongo.collection('products').updateOne({
             _id: product._id
         }, {
             $set: {
@@ -73,7 +81,7 @@ products.buyProduct = (product)=>{
 
 products.addProductToCustomer = (product, customer)=>{
     return new Promise((resolve, reject) => {
-        mongo.db.collection('customersProducts').insertOne({
+        mongo.collection('customersProducts').insertOne({
             customer: customer,
             product: product,
         }, (err, result) => {

@@ -16,11 +16,11 @@ export const login = async (data:any, token?:string) => {
     })
 }
 
-export const verify = async ( token?:string) => {
+export const getShopItems = async ( token?:string) => {
     return new Promise((resolve, reject) => {
         axios({
-            method: 'POST',
-            url: `${API_URL}/auth/verify`,
+            method: 'GET',
+            url: `${API_URL}/shop/getItems`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': (token ? token : "")

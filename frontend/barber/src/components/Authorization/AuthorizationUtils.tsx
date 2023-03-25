@@ -43,11 +43,12 @@ export const notAuthenticatedVerification = async (
     }
 
     let response: any = await verify(cookies.jwt_token)
-    if (!response.errors) {
+
+    if (!response.errors && response.status != 'OK') {
         return {
             redirect: {
                 permanent: false,
-                destination: '/dashboard/panel',
+                destination: '/',
             },
             props: {
                 ...pageProps,

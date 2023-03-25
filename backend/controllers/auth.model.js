@@ -1,10 +1,10 @@
-let mongo = require('../db.js');
-
+var mongoUtil = require( '../mongoUtil' );
+let mongo = mongoUtil.getDb();
 const auth = () => { }
 
 auth.getUserById = (id) => {
     return new Promise((resolve, reject) => {
-        mongo.db.collection('users').findOne({ _id: id }, (err, result) => {
+        mongo.collection('users').findOne({ _id: id }, (err, result) => {
             if(err) reject(err)
             resolve(result)
         })
@@ -13,7 +13,7 @@ auth.getUserById = (id) => {
 
 auth.getUserByEmail = (email) => {
     return new Promise((resolve, reject) => {
-        mongo.db.collection('users').findOne({ email: email }, (err, result) => {
+        mongo.collection('users').findOne({ email: email }, (err, result) => {
             if(err) reject(err)
             resolve(result)
         })
@@ -22,7 +22,7 @@ auth.getUserByEmail = (email) => {
 
 auth.registerUser = (user)=>{
     return new Promise((resolve, reject) => {
-        mongo.db.collection('users').insertOne({
+        mongo.collection('users').insertOne({
             email: user.email,
             password: user.password,
             userName: user.userName,
