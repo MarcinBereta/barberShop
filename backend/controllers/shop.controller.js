@@ -3,8 +3,9 @@ let userModel = require('../models/user.model');
 let shop = require('../models/shop');
 
 exports.getItems = async (req, res) => {
-    let items = await shop.find({})
-    return res.status(200).send({ status:"OK", items: items });
+    let items = await shop.find({"name": { "$regex": 'nive', $options: "i" }}).skip(req.params.skip).limit(req.params.limit)
+    let imemCount = await shop.countDocuments({"name": { "$regex": 'nive21', $options: "i" }})
+    return res.status(200).send({ status:"OK", items: items, imemsCount: imemCount });
 }
 
 exports.addItemToShop = async (req, res) => {

@@ -4,16 +4,12 @@ let mongo = mongoUtil.getDb();
 const products = () => { }
 
 products.getAllProducts = () => {
-    console.log("GETTING ALL PRODUCTS")
     return new Promise((resolve, reject) => {
-        console.log(mongo)
         mongo.collection("products").find({}).toArray(function(err, res) {
             if (err) {
                 console.log(err)
                 reject(err)
             };
-            console.log("CHUHJ")
-            console.log(result)
             resolve(result) ;
         });
     })
