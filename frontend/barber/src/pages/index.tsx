@@ -17,7 +17,15 @@ export default Home
 
 export const getServerSideProps = async (context:any) => {
   let data = await notAuthenticatedVerification(context.req,  {}, 1);
-  let shopItems:any = await getShopItems();
+  let page = 1;
+  if (context.query.page) {
+      page = context.query.page;
+  }
+  let debouncedSearch = ""
+  if (context.query.debouncedsearch) {
+      debouncedSearch = context.query.debouncedsearch
+  }
+  let shopItems:any = await getShopItems(page, debouncedSearch);
   // return data
   if(shopItems.status == 'OK'){
     console.log(shopItems)

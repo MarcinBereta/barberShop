@@ -3,8 +3,12 @@ let userModel = require('../models/user.model');
 let shop = require('../models/shop');
 
 exports.getItems = async (req, res) => {
-    let items = await shop.find({"name": { "$regex": 'nive', $options: "i" }}).skip(req.params.skip).limit(req.params.limit)
-    let imemCount = await shop.countDocuments({"name": { "$regex": 'nive21', $options: "i" }})
+
+    //If you want to enter data send, you will get it by req.body for example let res = req.body
+    let pageSize = 25;
+    let skip = (req.params.pagination - 1) * pageSize;
+    let items = await shop.find({"name": { "$regex": req.params.search, $options: "i" }}).skip(skip).limit(pageSize)
+    let imemCount = await shop.countDocuments({"name": { "$regex": req.params.search, $options: "i" }})
     return res.status(200).send({ status:"OK", items: items, imemsCount: imemCount });
 }
 
