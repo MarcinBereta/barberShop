@@ -10,6 +10,6 @@ let authUtils = require('../utils/authUtils');
 
 // Endpoints for "/auth" API route
 
-router.get("/getItems", shop.getItems)
+router.get("/getItems/:pagination", shop.getItems)
 
 module.exports = router;
