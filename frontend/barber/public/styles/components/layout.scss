@@ -1,10 +1,10 @@
-.header{
-    display:flex;
+.header {
+    display: flex;
     flex-direction: row;
     width: 100%;
     height: 5vh;
 }
-.header_logo{
+.header_logo {
     width: 20%;
     height: 100%;
     background-color: #000;
@@ -12,7 +12,7 @@
     justify-content: center;
     align-items: center;
 }
-.header_dropdown{
+.header_dropdown {
     width: 80%;
     height: 100%;
     display: flex;
@@ -20,11 +20,124 @@
     align-items: center;
     padding-right: 2rem;
 }
-.dropdownMain{
+.dropdownMain {
     width: 40%;
     position: absolute;
 }
-.dropdownMenu{
+.dropdownMenu {
     height: 40%;
     position: absolute;
+}
+
+.inside-pagination-chevron {
+    background-color: gray;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: gray;
+
+        i {
+            color: white;
+        }
+    }
+}
+
+.inside-pagination-chevron-disabled {
+    background-color: gray;
+    border-radius: 50%;
+    cursor: default;
+    width: 30px;
+    height: 30px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination-inside {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    background-color: gray;
+    padding: 5px 5px 5px 5px;
+    border-radius: 19px;
+    margin-top: 0px;
+    font-weight: 500;
+    margin-bottom: 0px;
+    -webkit-box-shadow: 0px 0px 50px -6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 50px -6px rgba(0, 0, 0, 0.2);
+
+    .pagination-chevron {
+        background-color: gray;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        i {
+            user-select: none;
+        }
+
+        &:hover {
+            background-color: gray;
+
+            i {
+                color: white;
+            }
+        }
+    }
+
+    .pagination-chevron-disabled {
+        background-color: gray;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        pointer-events: none;
+    }
+
+    li {
+        display: inline-block;
+        border-radius: 2px;
+        text-align: center;
+        vertical-align: top;
+        height: 30px;
+
+        a {
+            background-color: transparent;
+            display: inline-block;
+            font-size: 0.9rem;
+            line-height: 30px;
+            transition: all 0.2s;
+
+            &:hover {
+                color: #0090ff;
+                font-size: 130%;
+            }
+        }
+
+        &.active a {
+            font-size: 130%;
+            font-weight: 500;
+            color: white;
+        }
+
+        i {
+            font-size: 2rem;
+        }
+    }
+
+    li.pages ul li {
+        display: inline-block;
+        float: none;
+    }
 }

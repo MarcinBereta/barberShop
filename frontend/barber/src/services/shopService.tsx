@@ -1,33 +1,40 @@
-import axios from "axios"
-const API_URL = "http://127.0.0.1:4000"
-export const login = async (data:any, token?:string) => {
+import axios from 'axios'
+const API_URL = 'http://127.0.0.1:4000'
+export const login = async (data: any, token?: string) => {
     return new Promise((resolve, reject) => {
         axios({
             method: 'POST',
-            url: "127.0.0.1:4000/auth/login",
+            url: '127.0.0.1:4000/auth/login',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': (token ? token : "")
+                Authorization: token ? token : '',
             },
-            data: data
+            data: data,
         })
-            .then((result:any) => resolve(result.data))
-            .catch((error:any) => resolve(error))
+            .then((result: any) => resolve(result.data))
+            .catch((error: any) => resolve(error))
     })
 }
 
-export const getShopItems = async (page:number, debouncedSearch:string, data?:any, token?:string) => {
+export const getShopItems = async (
+    page: number,
+    debouncedSearch: string,
+    data?: any,
+    token?: string
+) => {
     return new Promise((resolve, reject) => {
         axios({
             method: 'GET',
-            url: `${API_URL}/shop/getItems/`+page+"?search="+debouncedSearch,
+            url: `${API_URL}/shop/getItems/` + page,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': (token ? token : "")
+                Authorization: token ? token : '',
             },
-            data: data
+            data: {
+                debouncedSearch: debouncedSearch,
+            },
         })
-            .then((result:any) => resolve(result.data))
-            .catch((error:any) => resolve(error))
+            .then((result: any) => resolve(result.data))
+            .catch((error: any) => resolve(error))
     })
 }

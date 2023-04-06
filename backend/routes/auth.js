@@ -10,6 +10,10 @@ let authUtils = require('../utils/authUtils');
 
 // Endpoints for "/auth" API route
 
-router.post("/verify",  auth.verify)
+router.post("/verify", authUtils.validateToken, auth.verify)
+
+router.post("/login", auth.login)
+
+router.post("/register", auth.register)
 
 module.exports = router;
