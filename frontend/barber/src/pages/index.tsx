@@ -6,31 +6,28 @@ import { notAuthenticatedVerification } from '@/components/Authorization/Authori
 import { getShopItems } from '@/services/shopService'
 const inter = Inter({ subsets: ['latin'] })
 
-const  Home = (props:any)=> {
-  return (
-   <ShopList {...props}/>
-  )
+const Home = (props: any) => {
+    return <ShopList {...props} />
 }
 
 export default Home
 
-
-export const getServerSideProps = async (context:any) => {
-  let data = await notAuthenticatedVerification(context.req,  {}, 1);
-  let page = 1;
-  if (context.query.page) {
-      page = context.query.page;
-  }
-  let debouncedSearch = ""
-  if (context.query.debouncedsearch) {
-      debouncedSearch = context.query.debouncedsearch
-  }
-  let shopItems:any = await getShopItems(page, debouncedSearch);
-  // return data
-  if(shopItems.status == 'OK'){
-    console.log(shopItems)
-    data.props.shopItems = shopItems.items;    
-  }
-      // data.props.shopItems = shopItems.items;
-  return data;
+export const getServerSideProps = async (context: any) => {
+    let data = await notAuthenticatedVerification(context.req, {}, 1)
+    let page = 1
+    if (context.query.page) {
+        page = context.query.page
+    }
+    let debouncedSearch = ''
+    if (context.query.debouncedsearch) {
+        debouncedSearch = context.query.debouncedsearch
+    }
+    let shopItems: any = await getShopItems(page, debouncedSearch)
+    if (shopItems.status == 'OK') {
+        data.props.shopItems = shopItems.items
+        data.props.itemCount = shopItems.itemCount
+        data.props.page = page
+    }
+    // data.props.shopItems = shopItems.items;
+    return data
 }
