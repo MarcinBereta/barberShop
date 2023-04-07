@@ -4,7 +4,7 @@ import { Layout } from '../Layout/Layout'
 import { useDebounce } from '../utils/useDebounce'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Pagination } from '../utils/Pagination'
-import {register } from '../../services/authService'
+import { register } from '../../services/authService'
 const RegisterMain = (props: any) => {
     console.log(props)
     const router = useRouter()
@@ -12,22 +12,26 @@ const RegisterMain = (props: any) => {
     const [password, setPassword] = useState<string>()
     const [email, setEmail] = useState<string>()
     const [confirmPassword, setConfirmPassword] = useState<string>()
-    const handleRegister = async ()=>{
-        console.log("CHUJ")
+    const handleRegister = async () => {
+        console.log('CHUJ')
         console.log(userName)
         console.log(password)
         console.log(confirmPassword)
-        if(userName == "" || password == "" || email == "" || confirmPassword == "")
-            return 
-        if(password != confirmPassword)
+        if (
+            userName == '' ||
+            password == '' ||
+            email == '' ||
+            confirmPassword == ''
+        )
             return
-        console.log("SENDING REGISTER")
-        let res:any = await register ({
+        if (password != confirmPassword) return
+        console.log('SENDING REGISTER')
+        let res: any = await register({
             username: userName,
             password: password,
             email: email,
         })
-        if(res.status == "OK"){
+        if (res.status == 'OK') {
             router.push({
                 pathname: '/auth',
                 query: { token: res.data.token.toString() },
@@ -37,37 +41,49 @@ const RegisterMain = (props: any) => {
 
     return (
         <Layout>
-            <div className="products">
+            <div className="loginForm">
                 <div>
                     UserName:
-                    <input type="text" onChange={(e)=>{
-                        setUserName(e.target.value)
-                    }} />
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setUserName(e.target.value)
+                        }}
+                    />
                 </div>
                 <div>
                     Email:
-                    <input type="text" onChange={(e)=>{
-                        setEmail(e.target.value)
-                    }} />
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                        }}
+                    />
                 </div>
                 <div>
                     Password:
-                    <input type="text" onChange={(e)=>{
-                        setPassword(e.target.value)
-                    }} />
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setPassword(e.target.value)
+                        }}
+                    />
                 </div>
                 <div>
                     Confirm Password:
-                    <input type="text" onChange={(e)=>{
-                        setConfirmPassword(e.target.value)
-                    }} />
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value)
+                        }}
+                    />
                 </div>
-                <button onClick={handleRegister}>
-                    Register
-                </button>
-                <button onClick={()=>{
-                    router.push('/login')
-                }}>
+                <button onClick={handleRegister}>Register</button>
+                <button
+                    onClick={() => {
+                        router.push('/login')
+                    }}
+                >
                     login
                 </button>
             </div>
