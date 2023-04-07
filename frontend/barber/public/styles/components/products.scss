@@ -1,0 +1,46 @@
+.products {
+    width: 100%;
+    height: auto;
+}
+
+.header-input {
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    & > input {
+        width: 40%;
+        height: 80%;
+        border-radius: 5px;
+        margin: 10px;
+        padding: 10px;
+    }
+}
+
+.productsTable {
+    width: 80%;
+    margin-left: 10%;
+}
+.productListItem {
+    text-align: center;
+    padding: 5px;
+}
+.productListItemButton {
+    @extend .productListItem;
+    background-color: gray;
+    border-radius: 10px;
+}
+.paginationContainer {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & > div {
+        width: 10%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

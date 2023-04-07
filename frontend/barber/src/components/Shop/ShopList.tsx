@@ -40,11 +40,17 @@ const ShopList = (props: any) => {
     const generateHeader = (): React.ReactElement[] => {
         let headerArr: React.ReactElement[] = []
 
-        let headerItems: string[] = ['name', 'price', 'quantity', 'actions']
+        let headerItems: string[] = [
+            'name',
+            'price',
+            'quantity',
+            'category',
+            'actions',
+        ]
 
         headerItems.forEach((item: string, index: number) => {
             headerArr.push(
-                <th className="userListHeaderItem">
+                <th className="productListHeaderItem">
                     <div>{item}</div>
                 </th>
             )
@@ -74,14 +80,17 @@ const ShopList = (props: any) => {
                     />
                 </div>
                 <PerfectScrollbar>
-                    <table>
+                    <table className="productsTable">
                         <thead>
-                            <tr className="userListTr">{generateHeader()}</tr>
+                            <tr className="productItem">{generateHeader()}</tr>
                         </thead>
                         <tbody>{generateUserItems()}</tbody>
                     </table>
                 </PerfectScrollbar>
-                <div style={{ width: 'min-content', marginTop: '10px' }}>
+                <div
+                    className="paginationContainer"
+                    style={{ marginTop: '10px' }}
+                >
                     <Pagination
                         inside={true}
                         maxPages={

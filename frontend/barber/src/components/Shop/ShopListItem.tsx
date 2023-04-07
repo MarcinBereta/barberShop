@@ -13,13 +13,13 @@ const ShopListItem = ({
     }
 }) => {
     return (
-        <tr className="userListTr">
-            <td className="userListItem">{product.name}</td>
-            <td className="userListItem">{product.price}</td>
-            <td className="userListItem">{product.quantity}</td>
-            <td className="userListItem">{product.category}</td>
+        <tr className="productItem">
+            <td className="productListItem">{product.name}</td>
+            <td className="productListItem">{product.price}</td>
+            <td className="productListItem">{product.quantity}</td>
+            <td className="productListItem">{product.category}</td>
 
-            <td className="userListItem">
+            <td className="productListItemButton">
                 {/* <Link href={`/admin/app/groups/${item.id}`}> */}
                 Buy product
                 {/* </Link> */}
