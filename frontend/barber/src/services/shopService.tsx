@@ -38,3 +38,21 @@ export const getShopItems = async (
             .catch((error: any) => resolve(error))
     })
 }
+
+export const buyShopItem = async (productId: string, token?: string) => {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'POST',
+            url: `${API_URL}/shop/buyItem`,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: token ? token : '',
+            },
+            data: {
+                productId: productId,
+            },
+        })
+            .then((result: any) => resolve(result.data))
+            .catch((error: any) => resolve(error))
+    })
+}

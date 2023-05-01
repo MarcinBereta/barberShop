@@ -61,6 +61,7 @@ export const notAuthenticatedVerification = async (
         props: {
             ...pageProps,
             xuser: response.user || null,
+            token: cookies.jwt_token,
         },
     }
 }
@@ -127,7 +128,12 @@ export const authenticatedVerification = async (
     }
 }
 
-export const loginVerification = async (req:any, res:any, pageProps:any, permissions?:any) => {
+export const loginVerification = async (
+    req: any,
+    res: any,
+    pageProps: any,
+    permissions?: any
+) => {
     let cookies = parse(req.headers?.jwt_token || '')
 
     if (!cookies.jwt_token) {
@@ -141,7 +147,7 @@ export const loginVerification = async (req:any, res:any, pageProps:any, permiss
         res.setHeader('Set-Cookie', cookie)
         let verification: any = await verify(pageProps.token)
         console.log(verification)
-        if (verification.status != 'OK' ) {
+        if (verification.status != 'OK') {
             return {
                 redirect: {
                     permanent: false,
@@ -177,9 +183,12 @@ export const loginVerification = async (req:any, res:any, pageProps:any, permiss
     }
 }
 
-export const logoutVerification = async (req:any, res:any, pageProps:any) => {
-
-    const cookie = serialize('jwt_token', "deleted", {
+export const logoutVerification = async (
+    req: any,
+    res: any,
+    pageProps: any
+) => {
+    const cookie = serialize('jwt_token', 'deleted', {
         maxAge: -1,
         httpOnly: true,
         //secure: process.env.NODE_ENV === 'production',
@@ -192,10 +201,10 @@ export const logoutVerification = async (req:any, res:any, pageProps:any) => {
     return {
         redirect: {
             permanent: false,
-            destination: "/login",
+            destination: '/login',
         },
         props: {
-            xuser: null
-        }
+            xuser: null,
+        },
     }
 }

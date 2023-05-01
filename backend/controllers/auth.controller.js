@@ -47,9 +47,7 @@ exports.verify = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
-    console.log(username);
     let myUser = await user.findOne({ username: username });
-    console.log(myUser);
     if (myUser) {
         let authorized = await comparePassword(password, myUser.password);
         if (!authorized) {
@@ -116,4 +114,20 @@ exports.register = async (req, res) => {
         session.endSession();
     }
     return res.status(200).send({ status: "OK", data: { token: token } });
+};
+
+exports.getUser = async (req, res, next) => {
+    let users;
+    try {
+        users = await user.findById(req.authenticatedId);
+        console.log(users);
+        console.log("QWE!@#WE");
+        if (users == null) {
+            return res.status(404).json({ message: "Cannot find item" });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+    res.user = users;
+    next();
 };

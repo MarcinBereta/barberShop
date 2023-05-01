@@ -59,10 +59,21 @@ const ShopList = (props: any) => {
     }
 
     const generateUserItems = (): React.ReactElement[] => {
-        let userItemsArr: React.ReactElement[] = []
         console.log(props)
+        let userItemsArr: React.ReactElement[] = []
+        let keyIndex = 0
         for (let product of props.shopItems) {
-            userItemsArr.push(<ShopListItem product={product} />)
+            userItemsArr.push(
+                <ShopListItem
+                    key={keyIndex}
+                    product={product}
+                    token={props.token}
+                    refreshSite={() => {
+                        refreshSite(1)
+                    }}
+                />
+            )
+            keyIndex++
         }
         return userItemsArr
     }
@@ -94,7 +105,7 @@ const ShopList = (props: any) => {
                     <Pagination
                         inside={true}
                         maxPages={
-                            props.page.itemCount / 25 == 0
+                            Math.floor(props.itemCount / 25) == 0
                                 ? 1
                                 : props.itemCount / 25
                         }
