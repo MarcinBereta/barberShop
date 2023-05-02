@@ -94,22 +94,24 @@ exports.buyProduct = async (req, res) => {
     }
     console.log("PIZDA");
     const user = res.user;
+    const session = await conn.startSession();
 
     try {
         // const session = await conn.startSession();
-        // session.startTransaction();
+        session.startTransaction();
         console.log("TEST2");
         console.log(user);
         product.quantity -= 1;
         user.cart.push(product);
         console.log(user);
-        await user.save();
-        await product.save();
-        // session.commitTransaction();
-        // session.endSession();
+        await user.save({ session: session });
+        await product.save({ session: session });
+        await session.commitTransaction();
         return res.status(200).json({ status: "OK" });
     } catch (err) {
-        console.log(err);
+        await session.abortTransaction();
         return res.status(500).json({ message: err.message });
+    } finally {
+        session.endSession();
     }
 };
