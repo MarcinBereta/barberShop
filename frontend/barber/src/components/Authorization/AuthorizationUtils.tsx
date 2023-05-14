@@ -42,20 +42,6 @@ export const notAuthenticatedVerification = async (
     }
 
     let response: any = await verify(cookies.jwt_token)
-    console.log(response)
-    // console.log(req)
-    // if (!response.errors && response.status != 'OK') {
-    //     return {
-    //         redirect: {
-    //             permanent: false,
-    //             destination: '/',
-    //         },
-    //         props: {
-    //             ...pageProps,
-    //             xuser: null,
-    //         },
-    //     }
-    // }
 
     return {
         props: {
@@ -87,38 +73,7 @@ export const authenticatedVerification = async (
     }
 
     let verification: any = await verify(cookies.jwt_token)
-    if (verification.errors) {
-        return {
-            redirect: {
-                permanent: false,
-                destination: '/login',
-            },
-            props: {
-                ...pageProps,
-                xuser: null,
-            },
-        }
-    }
-
-    if (permissions && permissions > 0) {
-        let authorized = comparePermissions(
-            verification.data.verify.user.permissions,
-            permissions
-        )
-        if (authorized == false) {
-            return {
-                redirect: {
-                    permanent: false,
-                    destination: '/login',
-                },
-                props: {
-                    ...pageProps,
-                    xuser: null,
-                },
-            }
-        }
-    }
-
+    console.log(verification.data)
     return {
         props: {
             xuser: verification.data.verify.user,
