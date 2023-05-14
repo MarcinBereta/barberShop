@@ -7,6 +7,7 @@ const Header = (props: any) => {
     const options = [
         [
             { value: 'products', label: 'Products' },
+            { value: 'addProduct', label: 'Add Product' },
             { value: 'basket', label: 'basket' },
             { value: 'logout', label: 'Logout' },
             { value: 'shopHistory', label: 'history' },

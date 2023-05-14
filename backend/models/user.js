@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema({
             "Please fill a valid email address",
         ],
     },
+    permissions: {
+        type: Number,
+        required: false,
+        default: 1,
+    },
     cart: [
         {
             type: mongoose.Schema.Types.ObjectId,

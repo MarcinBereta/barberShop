@@ -1,5 +1,3 @@
-let authModel = require("./auth.model");
-let userModel = require("../models/user.model");
 let shop = require("../models/shop");
 const conn = require("../models/connections");
 
@@ -25,11 +23,12 @@ exports.getItems = async (req, res) => {
 };
 
 exports.addItemToShop = async (req, res) => {
+    console.log(req.body);
     let item = new shop({
         name: req.body.name,
         price: req.body.price,
-        description: req.body.description,
-        image: req.body.image,
+        description: req.body.description || "",
+        image: req.body.image || "",
         category: req.body.category,
         quantity: req.body.quantity,
     });
@@ -37,6 +36,7 @@ exports.addItemToShop = async (req, res) => {
         const newItem = await item.save();
         res.status(200).send({ status: "OK", item: newItem });
     } catch (err) {
+        console.log(err);
         res.status(400).json({ message: err.message });
     }
 };
@@ -92,18 +92,14 @@ exports.buyProduct = async (req, res) => {
     if (product.quantity < 1) {
         return res.status(400).json({ message: "Not enough items" });
     }
-    console.log("PIZDA");
     const user = res.user;
     const session = await conn.startSession();
 
     try {
         // const session = await conn.startSession();
         session.startTransaction();
-        console.log("TEST2");
-        console.log(user);
         product.quantity -= 1;
         user.cart.push(product);
-        console.log(user);
         await user.save({ session: session });
         await product.save({ session: session });
         await session.commitTransaction();

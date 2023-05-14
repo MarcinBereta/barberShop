@@ -1,9 +1,5 @@
-let authModel = require("./auth.model");
-let userModel = require("../models/user.model");
-let shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 let user = require("../models/user");
 const conn = require("../models/connections");
 async function hashPassword(password) {
@@ -33,10 +29,11 @@ async function comparePassword(password, hash) {
 exports.verify = async (req, res) => {
     console.log(req.authenticatedId);
     let myUser = await user.findOne({ _id: Object(req.authenticatedId) });
-    console.log(myUser);
     if (myUser) {
         delete myUser.password;
         myUser._id = myUser._id.toString();
+        console.log(myUser);
+
         return res.status(200).send({ status: "OK", user: myUser });
     } else {
         return res

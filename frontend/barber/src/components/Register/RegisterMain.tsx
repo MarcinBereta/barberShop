@@ -63,7 +63,7 @@ const RegisterMain = (props: any) => {
                 <div>
                     Password:
                     <input
-                        type="text"
+                        type="password"
                         onChange={(e) => {
                             setPassword(e.target.value)
                         }}
@@ -72,7 +72,7 @@ const RegisterMain = (props: any) => {
                 <div>
                     Confirm Password:
                     <input
-                        type="text"
+                        type="password"
                         onChange={(e) => {
                             setConfirmPassword(e.target.value)
                         }}

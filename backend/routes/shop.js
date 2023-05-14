@@ -20,4 +20,6 @@ router.post(
     shop.buyProduct
 );
 
+router.post("/addProduct", authUtils.validateToken, shop.addItemToShop);
+
 module.exports = router;
