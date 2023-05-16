@@ -13,7 +13,6 @@ const RegisterMain = (props: any) => {
     const [email, setEmail] = useState<string>()
     const [confirmPassword, setConfirmPassword] = useState<string>()
     const handleRegister = async () => {
-        console.log('CHUJ')
         console.log(userName)
         console.log(password)
         console.log(confirmPassword)
