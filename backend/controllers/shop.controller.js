@@ -79,13 +79,11 @@ exports.getItem = async (req, res, next) => {
         return res.status(500).json({ message: err.message });
     }
     res.item = item;
-    console.log("CHUJS)ADQWE");
     next();
 };
 
 exports.buyProduct = async (req, res) => {
     const product = res.item;
-    console.log("PQWEDAS");
     if (product.quantity < 0) {
         return res.status(400).json({ message: "Not enough items" });
     }
