@@ -2,21 +2,21 @@ let shop = require("../models/shop");
 const conn = require("../models/connections");
 
 exports.getItems = async (req, res) => {
-    //If you want to enter data send, you will get it by req.body for example let res = req.body
     let pageSize = 25;
     let skip = (req.params.pagination - 1) * pageSize;
-    console.log(req.body);
-    let search = req.body.search;
+    let search = req.body.debouncedSearch;
     if (search == null) {
         search = "";
     }
+    console.log(search);
     let items = await shop
-        .find({ name: { $regex: search, $options: "i" } })
+        .find({ name: { $regex: search, $options: "x" } })
         .skip(skip)
         .limit(pageSize);
     let imemCount = await shop.countDocuments({
         name: { $regex: search, $options: "i" },
     });
+    console.log(items)
     return res
         .status(200)
         .send({ status: "OK", items: items, itemCount: imemCount });
