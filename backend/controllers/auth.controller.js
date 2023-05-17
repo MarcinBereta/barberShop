@@ -67,6 +67,7 @@ exports.login = async (req, res) => {
 };
 exports.register = async (req, res) => {
     const { username, password, email } = req.body;
+    console.log("TEST")
     if (!email.includes("@") || !email.includes(".")) {
         return res
             .status(200)
@@ -91,24 +92,19 @@ exports.register = async (req, res) => {
         email: email,
         cart: [],
     });
-    const session = await conn.startSession();
     let token;
     try {
-        session.startTransaction();
-        await newUser.save({ session });
-
+        console.log(newUser)
+        await newUser.save();
         let userObject = {
             id: newUser._id.toString(),
         };
-        console.log(userObject);
         token = jwt.sign(userObject, "123qweascxzgwwegdsadqrgyeds", {
             expiresIn: 7 * 24 * 60 * 60,
         });
     } catch (err) {
-        await session.abortTransaction();
         return res.status(200).send({ status: "ERROR", message: err.message });
     } finally {
-        session.endSession();
     }
     return res.status(200).send({ status: "OK", data: { token: token } });
 };
