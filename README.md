@@ -6,7 +6,7 @@ Adrian Żerebiec:  zerebiec@student.agh.edu.pl
 
 Marcin Bereta: mbereta@student.agh.edu.pl
 
-##Temat:
+## Temat:
 
 Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak: 
 
@@ -27,6 +27,6 @@ Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak:
 - NextJs
 
 ## Struktura projektu
-- Katalog backend
-- Katalog frontend
+- Katalog backend: zawiera on całą logikę projektu, wszystkie operacje
+- Katalog frontend: zawiera implemetację wyglądu aplikacji
 
