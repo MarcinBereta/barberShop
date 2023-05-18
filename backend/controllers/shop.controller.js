@@ -15,7 +15,7 @@ exports.getItems = async (req, res) => {
     let imemCount = await shop.countDocuments({
         name: { $regex: search, $options: "i" },
     });
-    
+
     return res
         .status(200)
         .send({ status: "OK", items: items, itemCount: imemCount });
@@ -81,17 +81,17 @@ exports.getItem = async (req, res, next) => {
     next();
 };
 
-
-exports.getItems = async (req, res, next) => {
-    let products = []
-    for(let product of req.body.products){
+exports.getShopItems = async (req, res, next) => {
+    let products = [];
+    console.log(req.body);
+    for (let product of req.body.products) {
         let item;
         try {
             item = await shop.findById(product._id);
             if (item == null) {
                 return res.status(404).json({ message: "Cannot find item" });
             }
-            products.push(item)
+            products.push(item);
         } catch (err) {
             return res.status(500).json({ message: err.message });
         }
@@ -127,23 +127,25 @@ exports.buyProduct = async (req, res) => {
     }
 };
 
-
 exports.buyProducts = async (req, res) => {
     const products = res.items;
-    for(let productIndex in products){
-        let product = products[productIndex]
-        if (product.quantity < 0 || req.body.products[productIndex].quantity > product.quantity) {
+    for (let productIndex in products) {
+        let product = products[productIndex];
+        if (
+            product.quantity < 0 ||
+            req.body.products[productIndex].quantity > product.quantity
+        ) {
             return res.status(400).json({ message: "Not enough items" });
         }
     }
-    
+
     const user = res.user;
     const session = await conn.startSession();
 
     try {
         session.startTransaction();
-        for(let productIndex in products){
-            let product = products[productIndex]
+        for (let productIndex in products) {
+            let product = products[productIndex];
             product.quantity -= req.body.products[productIndex].quantity;
             user.cart.push(product);
             await product.save({ session: session });

@@ -57,7 +57,6 @@ export const buyShopItem = async (productId: string, token?: string) => {
     })
 }
 
-
 export const BuyProducts = async (shopData: any, token?: string) => {
     return new Promise((resolve, reject) => {
         axios({
@@ -67,9 +66,7 @@ export const BuyProducts = async (shopData: any, token?: string) => {
                 'Content-Type': 'application/json',
                 Authorization: token ? token : '',
             },
-            data: {
-                productId: shopData,
-            },
+            data: shopData,
         })
             .then((result: any) => resolve(result.data))
             .catch((error: any) => resolve(error))

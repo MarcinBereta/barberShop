@@ -6,14 +6,14 @@ const Header = (props: any) => {
     const router = useRouter()
     const options = [
         [
-            { value: 'products', label: 'Products' },
+            { value: '', label: 'Products' },
             { value: 'addProduct', label: 'Add Product' },
             { value: 'basket', label: 'basket' },
             { value: 'logout', label: 'Logout' },
             { value: 'shopHistory', label: 'history' },
         ],
         [
-            { value: 'products', label: 'Products' },
+            { value: '', label: 'Products' },
             { value: 'basket', label: 'basket' },
             { value: 'login', label: 'Login' },
             { value: 'register', label: 'Register' },

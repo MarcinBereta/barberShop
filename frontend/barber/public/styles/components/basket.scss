@@ -1,0 +1,14 @@
+.basketMain {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    margin: 5px;
+    justify-content: space-between;
+    & > div {
+        background-color: lavenderblush;
+        padding: 5px;
+        border-radius: 10px;
+        color: black;
+        cursor: pointer;
+    }
+}

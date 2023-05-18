@@ -19,8 +19,7 @@ const ShopListItem = ({
 }) => {
     const handlePress = async () => {
         let basket = await AsyncStorage.getItem('basket')
-        if (basket == null) 
-            basket = JSON.stringify([])
+        if (basket == null) basket = JSON.stringify([])
         let basketArray = JSON.parse(basket)
         let itemExits = basketArray.find((item: any) => {
             return item._id == product._id
@@ -28,16 +27,17 @@ const ShopListItem = ({
         if (itemExits) {
             itemExits.quantity++
         } else {
-           let tempProduct = {
+            let tempProduct = {
                 _id: product._id,
                 name: product.name,
                 price: product.price,
                 quantity: 1,
-           } 
-              basketArray.push(tempProduct)
+            }
+            basketArray.push(tempProduct)
         }
-        
+
         await AsyncStorage.setItem('basket', JSON.stringify(basketArray))
+        alert('Product added to basket')
     }
 
     return (

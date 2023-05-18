@@ -24,8 +24,8 @@ router.post(
     "/buyItems",
     authUtils.validateToken,
     user.getUser,
-    shop.getItem,
-    shop.buyProduct
+    shop.getShopItems,
+    shop.buyProducts
 );
 
 router.post("/addProduct", authUtils.validateToken, shop.addItemToShop);
