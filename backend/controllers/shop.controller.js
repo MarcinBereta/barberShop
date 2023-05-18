@@ -8,15 +8,14 @@ exports.getItems = async (req, res) => {
     if (search == null) {
         search = "";
     }
-    console.log(search);
     let items = await shop
-        .find({ name: { $regex: search, $options: "x" } })
+        .find({ name: { $regex: search, $options: "x" }, quantity: { $gt: 0 } })
         .skip(skip)
         .limit(pageSize);
     let imemCount = await shop.countDocuments({
         name: { $regex: search, $options: "i" },
     });
-    console.log(items)
+    
     return res
         .status(200)
         .send({ status: "OK", items: items, itemCount: imemCount });
@@ -82,6 +81,25 @@ exports.getItem = async (req, res, next) => {
     next();
 };
 
+
+exports.getItems = async (req, res, next) => {
+    let products = []
+    for(let product of req.body.products){
+        let item;
+        try {
+            item = await shop.findById(product._id);
+            if (item == null) {
+                return res.status(404).json({ message: "Cannot find item" });
+            }
+            products.push(item)
+        } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
+    }
+    res.items = products;
+    next();
+};
+
 exports.buyProduct = async (req, res) => {
     const product = res.item;
     if (product.quantity < 0) {
@@ -94,12 +112,43 @@ exports.buyProduct = async (req, res) => {
     const session = await conn.startSession();
 
     try {
-        // const session = await conn.startSession();
         session.startTransaction();
         product.quantity -= 1;
         user.cart.push(product);
         await user.save({ session: session });
         await product.save({ session: session });
+        await session.commitTransaction();
+        return res.status(200).json({ status: "OK" });
+    } catch (err) {
+        await session.abortTransaction();
+        return res.status(500).json({ message: err.message });
+    } finally {
+        session.endSession();
+    }
+};
+
+
+exports.buyProducts = async (req, res) => {
+    const products = res.items;
+    for(let productIndex in products){
+        let product = products[productIndex]
+        if (product.quantity < 0 || req.body.products[productIndex].quantity > product.quantity) {
+            return res.status(400).json({ message: "Not enough items" });
+        }
+    }
+    
+    const user = res.user;
+    const session = await conn.startSession();
+
+    try {
+        session.startTransaction();
+        for(let productIndex in products){
+            let product = products[productIndex]
+            product.quantity -= req.body.products[productIndex].quantity;
+            user.cart.push(product);
+            await product.save({ session: session });
+        }
+        await user.save({ session: session });
         await session.commitTransaction();
         return res.status(200).json({ status: "OK" });
     } catch (err) {

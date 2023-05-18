@@ -23,7 +23,6 @@ const AddProduct = (props: any) => {
             },
             props.token
         )
-        console.log(res.status)
         if (res.status == 'OK') {
             router.push({
                 pathname: '/',

@@ -73,10 +73,9 @@ export const authenticatedVerification = async (
     }
 
     let verification: any = await verify(cookies.jwt_token)
-    console.log(verification.data)
     return {
         props: {
-            xuser: verification.data.verify.user,
+            xuser: verification.user,
             token: cookies.jwt_token,
             ...pageProps,
         },

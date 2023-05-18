@@ -1,6 +1,7 @@
 import React from 'react'
-import Link from 'next/link'
 import { buyShopItem } from '../../services/shopService'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 const ShopListItem = ({
     product,
     token,
@@ -17,12 +18,26 @@ const ShopListItem = ({
     refreshSite: () => void
 }) => {
     const handlePress = async () => {
-        let response: any = await buyShopItem(product._id as string, token)
-        console.log(response)
-        if (response.status == 'OK') {
-            console.log('OK')
-            refreshSite()
+        let basket = await AsyncStorage.getItem('basket')
+        if (basket == null) 
+            basket = JSON.stringify([])
+        let basketArray = JSON.parse(basket)
+        let itemExits = basketArray.find((item: any) => {
+            return item._id == product._id
+        })
+        if (itemExits) {
+            itemExits.quantity++
+        } else {
+           let tempProduct = {
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+           } 
+              basketArray.push(tempProduct)
         }
+        
+        await AsyncStorage.setItem('basket', JSON.stringify(basketArray))
     }
 
     return (
