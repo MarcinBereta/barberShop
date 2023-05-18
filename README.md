@@ -1,13 +1,32 @@
-# barberShop
+# Projekt zaliczeniowy - "barberShop"
 
-Skład grupy:
+## Skład grupy:
 
 Adrian Żerebiec:  zerebiec@student.agh.edu.pl
 
 Marcin Bereta: mbereta@student.agh.edu.pl
 
-Temat: barberShop
+## Temat:
 
-Technologia: MongoDB, Express, NextJs
+Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak: 
 
-Link do repozytorium: https://github.com/MarcinBereta/barberShop
+- szampony 
+
+- maski
+
+- olejki
+
+- odżywki
+
+## Technologia:
+
+- MongoDB(implementacja za pomocą frameworku Mongoose)
+
+- Express
+
+- NextJs
+
+## Struktura projektu
+- Katalog backend: zawiera on całą logikę projektu, wszystkie operacje
+- Katalog frontend: zawiera implemetację wyglądu aplikacji
+
