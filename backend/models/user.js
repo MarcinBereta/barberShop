@@ -3,6 +3,19 @@ const validateEmail = function (email) {
     var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return re.test(email);
 };
+
+const usersProductsSchema = new mongoose.Schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "products",
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+});
+
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -28,16 +41,7 @@ const userSchema = new mongoose.Schema({
         required: false,
         default: 1,
     },
-    cart: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "products",
-            quantity: {
-                type: Number,
-                required: true,
-            },
-        },
-    ],
+    cart: [usersProductsSchema],
 });
 
 module.exports = mongoose.model("users", userSchema);

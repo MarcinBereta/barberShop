@@ -41,6 +41,8 @@ const BasketMain = (props: any) => {
             router.push({
                 pathname: '/',
             })
+        } else {
+            alert(response.response.data.message)
         }
     }
 
@@ -83,6 +85,8 @@ const BasketMain = (props: any) => {
             router.push({
                 pathname: '/',
             })
+        } else {
+            alert(response.response.data.message)
         }
     }
 

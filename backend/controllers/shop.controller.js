@@ -83,7 +83,6 @@ exports.getItem = async (req, res, next) => {
 
 exports.getShopItems = async (req, res, next) => {
     let products = [];
-    console.log(req.body);
     for (let product of req.body.products) {
         let item;
         try {
@@ -147,7 +146,10 @@ exports.buyProducts = async (req, res) => {
         for (let productIndex in products) {
             let product = products[productIndex];
             product.quantity -= req.body.products[productIndex].quantity;
-            user.cart.push(product);
+            user.cart.push({
+                product: product._id,
+                quantity: req.body.products[productIndex].quantity,
+            });
             await product.save({ session: session });
         }
         await user.save({ session: session });
