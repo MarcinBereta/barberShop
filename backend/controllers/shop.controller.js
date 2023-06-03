@@ -1,5 +1,6 @@
 let shop = require("../models/shop");
 const conn = require("../models/connections");
+const history = require("../models/history");
 
 exports.getItems = async (req, res) => {
     let pageSize = 25;
@@ -9,7 +10,7 @@ exports.getItems = async (req, res) => {
         search = "";
     }
     let items = await shop
-        .find({ name: { $regex: search, $options: "x" }, quantity: { $gt: 0 } })
+        .find({ name: { $regex: search, $options: "x" }, quantity: { $gt: 0 } } )
         .skip(skip)
         .limit(pageSize);
     let imemCount = await shop.countDocuments({
@@ -109,11 +110,15 @@ exports.buyProduct = async (req, res) => {
     }
     const user = res.user;
     const session = await conn.startSession();
-
+    let productHistory = new history();
     try {
         session.startTransaction();
         product.quantity -= 1;
         user.cart.push(product);
+        productHistory.user = user._id;
+        productHistory.products.push({ product: product._id, quantity: 1 });
+        productHistory.date = Date.now();
+        await productHistory.save({ session: session });
         await user.save({ session: session });
         await product.save({ session: session });
         await session.commitTransaction();
@@ -140,9 +145,11 @@ exports.buyProducts = async (req, res) => {
 
     const user = res.user;
     const session = await conn.startSession();
+    let productHistory = new history();
 
     try {
         session.startTransaction();
+        productHistory.user = user._id;
         for (let productIndex in products) {
             let product = products[productIndex];
             product.quantity -= req.body.products[productIndex].quantity;
@@ -150,8 +157,14 @@ exports.buyProducts = async (req, res) => {
                 product: product._id,
                 quantity: req.body.products[productIndex].quantity,
             });
+            productHistory.products.push({
+                product: product._id,
+                quantity: req.body.products[productIndex].quantity,
+            });
             await product.save({ session: session });
         }
+        productHistory.date = Date.now();
+        await productHistory.save({ session: session });
         await user.save({ session: session });
         await session.commitTransaction();
         return res.status(200).json({ status: "OK" });

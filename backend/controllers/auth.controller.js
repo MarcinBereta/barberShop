@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 let user = require("../models/user");
 const conn = require("../models/connections");
+const history = require("../models/history");
 async function hashPassword(password) {
     return new Promise((resolve, reject) => {
         bcrypt.hash(password, 10, (err, hash) => {
@@ -124,3 +125,25 @@ exports.getUser = async (req, res, next) => {
     res.user = users;
     next();
 };
+
+exports.getUserHistory = async (req, res) =>{
+    let user;
+    try{
+        user = await user.findById(req.authenticatedId);
+        if(user == null){
+            return res.status(404).json({message: "Cannot find user"});
+        }
+    }catch(err){
+        return res.status(500).json({message: err.message});
+    }
+    let userHistory;   
+    try{
+        userHistory = await history.find({user: req.authenticatedId});
+        if(userHistory == null){
+            return res.status(404).json({message: "Cannot find history"});
+        }
+    }catch(err){
+        return res.status(500).json({message: err.message});
+    }
+
+}
