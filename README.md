@@ -543,3 +543,266 @@ exports.buyItem = async (req, res) => {
     }
 };
 ```
+### Katalog models
+Modele są strukturami, które definiują strukturę i zachowanie danych w bazie danych. Modele stanowią podstawę do tworzenia, odczytu, aktualizacji i usuwania danych w bazie danych. Są one często reprezentacją obiektów w aplikacji, które są mapowane na kolekcje w bazie danych.
+
+#### Plik connections.js
+Model ten odpowiada za nawiązywanie połączenia z bazą danych.
+```js
+const mongoose = require("mongoose");
+
+mongoose.connect(
+    "mongodb+srv://Mardorus:PokerAGH@poker.gmn3mgg.mongodb.net/barberShop?retryWrites=true&w=majority",
+    { useNewUrlParser: true }
+);
+
+const conn = mongoose.connection;
+
+conn.on("error", () => console.error.bind(console, "connection error"));
+
+conn.once("open", () => console.info("Connection to Database is successful"));
+
+module.exports = conn;
+```
+#### Plik history.js
+Model ten definiuje schemat dla kolekcji "purchaseHsitory" w bazie danych.
+Schemat zawiera pola takie jak:
+
+- user - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "users". Jest wymagane (required: true).
+- products - tablica obiektów, gdzie każdy obiekt zawiera:
+- product - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "products". Jest wymagane (required: true).
+- quantity - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
+- date - pole typu Date, które reprezentuje datę zakupu. Jest wymagane (required: true).
+```js
+const mongoose = require("mongoose");
+
+const purchaseHistory = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+        required: true,
+    },
+    products: [
+        {
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "products",
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+        },
+    ],
+    date: {
+        type: Date,
+        required: true,
+    },
+
+});
+
+module.exports = mongoose.model("history", purchaseHistory);
+```
+#### Plik shop.js
+Model ten definiuje schemat dla kolekcji "products" w bazie danych.
+Schemat zawiera pola takie jak:
+
+- name - pole typu String, które reprezentuje nazwę produktu. Jest wymagane (required: true).
+- price - pole typu Number, które reprezentuje cenę produktu. Jest wymagane (required: true).
+- description - pole typu String, które reprezentuje opis produktu. Nie jest wymagane (required: false).
+- image - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
+- category - pole typu String, które reprezentuje kategorię produktu. Jest wymagane (required: true). Może przyjąć wartości: "shampoo", "conditioner", "mask", "oils". Jest również - zdefiniowany enum, który ogranicza wartości do tych podanych.
+- quantity - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
+```js
+const mongoose = require("mongoose");
+
+const productSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: false,
+    },
+    image: {
+        type: String,
+        required: false,
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ["shampoo", "conditioner", "mask", "oils"],
+        defaultValue: "shampoo",
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+});
+
+module.exports = mongoose.model("products", productSchema);
+```
+#### Plik shop.model.js
+Ten kod definiuje moduł products, który eksportuje funkcje odpowiedzialne za operacje na kolekcji "products" w bazie danych.
+Funkcje dostępne w module products to:
+-`getAllProducts()`: Pobiera wszystkie produkty z kolekcji "products". Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (tablicą produktów) lub odrzuca się w przypadku błędu.
+-`getProductById(id)`: Pobiera produkt z kolekcji "products" na podstawie podanego identyfikatora (_id). Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (znalezionym produktem) lub odrzuca się w przypadku błędu.
+
+-`addProduct(product)`: Dodaje nowy produkt do kolekcji "products" na podstawie podanych danych produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (dodanym produktem) lub odrzuca się w przypadku błędu.
+
+-`updateProduct(product)`: Aktualizuje istniejący produkt w kolekcji "products" na podstawie podanych danych produktu. Aktualizacja odbywa się na podstawie identyfikatora (_id) produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (aktualizowanym produktem) lub odrzuca się w przypadku błędu.
+
+-`buyProduct(product)`: Aktualizuje ilość produktu w kolekcji "products" po zakupie. Aktualizacja odbywa się na podstawie identyfikatora (_id) produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (zaktualizowanym produktem) lub odrzuca się w przypadku błędu.
+
+-`addProductToCustomer(product, customer)`: Dodaje informację o zakupionym produkcie przez klienta do kolekcji "customersProducts". Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (dodanym rekordem) lub odrzuca się w przypadku błędu.
+
+```js
+var mongoUtil = require( './../mongoUtil' );
+let mongo = mongoUtil.getDb();
+
+const products = () => { }
+
+products.getAllProducts = () => {
+    return new Promise((resolve, reject) => {
+        mongo.collection("products").find({}).toArray(function(err, res) {
+            if (err) {
+                console.log(err)
+                reject(err)
+            };
+            resolve(result) ;
+        });
+    })
+}
+
+products.getProductById = (id) => {
+    return new Promise((resolve, reject) => {
+        mongo.collection('products').findOne({ _id: id }, (err, result) => {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+products.addProduct = (product)=>{
+    return new Promise((resolve, reject) => {
+        mongo.collection('products').insertOne({
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            image: product.image,
+            category: product.category,
+            quantity: product.quantity,
+        }, (err, result) => {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+products.updateProduct = (product)=>{
+    return new Promise((resolve, reject) => {
+        mongo.collection('products').updateOne({
+            _id: product._id
+        }, {
+            $set: {
+                name: product.name,
+                price: product.price,
+                description: product.description,
+                image: product.image,
+                category: product.category,
+                quantity: product.quantity,
+            }
+        }, (err, result) => {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+products.buyProduct = (product)=>{
+    return new Promise((resolve, reject) => {
+        mongo.collection('products').updateOne({
+            _id: product._id
+        }, {
+            $set: {
+                quantity: product.quantity,
+            }
+        }, (err, result) => {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+products.addProductToCustomer = (product, customer)=>{
+    return new Promise((resolve, reject) => {
+        mongo.collection('customersProducts').insertOne({
+            customer: customer,
+            product: product,
+        }, (err, result) => {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+
+module.exports = products
+```
+#### Plik user.js
+
+```js
+const mongoose = require("mongoose");
+const validateEmail = function (email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email);
+};
+
+const usersProductsSchema = new mongoose.Schema({
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "products",
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+});
+
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: [validateEmail, "Please fill a valid email address"],
+        match: [
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            "Please fill a valid email address",
+        ],
+    },
+    permissions: {
+        type: Number,
+        required: false,
+        default: 1,
+    },
+    cart: [usersProductsSchema],
+});
+
+module.exports = mongoose.model("users", userSchema);
+```
