@@ -32,7 +32,7 @@ Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak:
 
 ## Opis backendu
 Backend został zaimplemntowany z pomocą framework'a Express. Jako bazę danych wybraliśmy MongoDb i zaimplentowaliśmy z pomocą frameworku Mongoose
-### server.js
+### `server.js`
 Moduł ten służy do nasłuchiwania oraz nawiązywania połączenia na porcie 4000
 ```js
 const express = require("express");
@@ -64,7 +64,7 @@ server.listen(PORT, function () {
     console.log("Brain Wars services API listening on PORT: " + PORT);
 });
 ```
-### mongoUtils.js
+### `mongoUtils.js`
 Ten moduł służy do nawiązywania połączenia z bazą danych MongoDB oraz udostępniania referencji do tej bazy danych. 
 ```js
 var MongoClient = require( 'mongodb' ).MongoClient;
@@ -83,10 +83,10 @@ module.exports = {
   }
 };
 ```
-### Katalog controllers
+### `Katalog controllers`
 Kontrolery definiują funkcje lub metody, które są wywoływane w momencie otrzymania żądania HTTP na określonej ścieżce (route). Te funkcje przetwarzają dane wejściowe, wykonują logikę biznesową i generują odpowiedź do klienta.
 
-#### auth.controller.js
+#### `auth.controller.js`
 Ten kod zawiera kontrolery (controllers) odpowiedzialne za obsługę różnych żądań HTTP w aplikacji. Oto ich działanie:
 
 - hashPassword(password): Asynchroniczna funkcja, która używa modułu bcrypt do hashowania hasła. Zwraca obietnicę, która rozwiązuje się z zahaszowanym hasłem lub wartością null w przypadku błędu.
@@ -253,7 +253,7 @@ exports.getUserHistory = async (req, res) =>{
 
 }
 ```
-#### auth.model.js
+#### `auth.model.js`
 Ten kod definiuje moduł auth, który zawiera metody do interakcji z bazą danych MongoDB. Oto ich działanie:
 
 -auth.getUserById(id): Funkcja, która pobiera użytkownika na podstawie podanego identyfikatora (id). Wykorzystuje metodę findOne z kolekcji "users" w bazie danych, aby znaleźć użytkownika o pasującym identyfikatorze. Zwraca obietnicę, która rozwiązuje się z wynikiem (użytkownikiem) lub odrzuca się z błędem.
@@ -300,7 +300,7 @@ auth.registerUser = (user)=>{
 
 module.exports = auth
 ```
-#### shop.controller.js
+#### `shop.controller.js`
 Ten kod definiuje kilka funkcji obsługujących operacje na sklepie. Oto ich działanie:
 
 - exports.getItems: Funkcja pobiera elementy sklepu na podstawie zapytania. Pobiera wartość stronicowania (pagination) z parametrów zapytania, a także opcjonalne zapytanie wyszukiwania (debouncedSearch) z ciała zapytania. Wykorzystuje model shop do wyszukiwania elementów, które pasują do podanego wyszukiwania (name) i mają liczbę większą od zera (quantity > 0). Wykorzystuje również wartość stronicowania, przeskakując odpowiednią ilość elementów i ograniczając liczbę zwracanych elementów do rozmiaru strony. Zwraca wynik w formacie JSON zawierający elementy sklepu i liczbę wszystkich elementów pasujących do zapytania.
@@ -496,7 +496,7 @@ exports.buyProducts = async (req, res) => {
     }
 };
 ```
-#### user.controller.js
+#### `user.controller.js`
 Ten kod definiuje dwie funkcje obsługujące operacje na użytkowniku oraz zakupie przedmiotu w sklepie. Oto ich działanie:
 
 - exports.getUser: Funkcja pobiera informacje o użytkowniku na podstawie uwierzytelnionego identyfikatora (req.authenticatedId). Zwraca status "OK" i dane użytkownika w formacie JSON.
