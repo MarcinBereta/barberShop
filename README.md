@@ -32,7 +32,7 @@ Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak:
 
 ## Opis backendu
 Backend został zaimplemntowany z pomocą framework'a Express. Jako bazę danych wybraliśmy MongoDb i zaimplentowaliśmy z pomocą frameworku Mongoose
-### `server.js`
+### Plik server.js
 Moduł ten służy do nasłuchiwania oraz nawiązywania połączenia na porcie 4000
 ```js
 const express = require("express");
@@ -64,7 +64,7 @@ server.listen(PORT, function () {
     console.log("Brain Wars services API listening on PORT: " + PORT);
 });
 ```
-### `mongoUtils.js`
+### Plik mongoUtils.js
 Ten moduł służy do nawiązywania połączenia z bazą danych MongoDB oraz udostępniania referencji do tej bazy danych. 
 ```js
 var MongoClient = require( 'mongodb' ).MongoClient;
@@ -83,25 +83,25 @@ module.exports = {
   }
 };
 ```
-### `Katalog controllers`
+### Katalog controllers
 Kontrolery definiują funkcje lub metody, które są wywoływane w momencie otrzymania żądania HTTP na określonej ścieżce (route). Te funkcje przetwarzają dane wejściowe, wykonują logikę biznesową i generują odpowiedź do klienta.
 
-#### `auth.controller.js`
+#### Plik auth.controller.js
 Ten kod zawiera kontrolery (controllers) odpowiedzialne za obsługę różnych żądań HTTP w aplikacji. Oto ich działanie:
 
-- hashPassword(password): Asynchroniczna funkcja, która używa modułu bcrypt do hashowania hasła. Zwraca obietnicę, która rozwiązuje się z zahaszowanym hasłem lub wartością null w przypadku błędu.
+- `hashPassword(password)`: Asynchroniczna funkcja, która używa modułu bcrypt do hashowania hasła. Zwraca obietnicę, która rozwiązuje się z zahaszowanym hasłem lub wartością null w przypadku błędu.
 
-- comparePassword(password, hash): Asynchroniczna funkcja, która używa modułu bcrypt do porównywania podanego hasła z zahaszowanym hasłem. Zwraca obietnicę, która rozwiązuje się wartością logiczną true, jeśli hasła są zgodne, lub wartością logiczną false w przeciwnym razie.
+- `comparePassword(password, hash)`: Asynchroniczna funkcja, która używa modułu bcrypt do porównywania podanego hasła z zahaszowanym hasłem. Zwraca obietnicę, która rozwiązuje się wartością logiczną true, jeśli hasła są zgodne, lub wartością logiczną false w przeciwnym razie.
 
-- verify(req, res): Funkcja obsługi żądania HTTP typu GET, która sprawdza, czy użytkownik jest uwierzytelniony (przez sprawdzenie req.authenticatedId) i zwraca informacje o uwierzytelnionym użytkowniku. Jeśli użytkownik istnieje, usuwa pole hasła z obiektu użytkownika i zwraca go w odpowiedzi jako JSON. W przeciwnym razie zwraca odpowiedni komunikat.
+- `verify(req, res)`: Funkcja obsługi żądania HTTP typu GET, która sprawdza, czy użytkownik jest uwierzytelniony (przez sprawdzenie req.authenticatedId) i zwraca informacje o uwierzytelnionym użytkowniku. Jeśli użytkownik istnieje, usuwa pole hasła z obiektu użytkownika i zwraca go w odpowiedzi jako JSON. W przeciwnym razie zwraca odpowiedni komunikat.
 
-- login(req, res): Funkcja obsługi żądania HTTP typu POST, która obsługuje logowanie użytkownika. Sprawdza, czy podane dane uwierzytelniania są prawidłowe (używając funkcji comparePassword) i generuje token JWT, jeśli uwierzytelnienie powiodło się. Zwraca odpowiednią odpowiedź JSON z tokenem w przypadku sukcesu lub odpowiednim komunikatem w przypadku błędu.
+- `login(req, res)`: Funkcja obsługi żądania HTTP typu POST, która obsługuje logowanie użytkownika. Sprawdza, czy podane dane uwierzytelniania są prawidłowe (używając funkcji comparePassword) i generuje token JWT, jeśli uwierzytelnienie powiodło się. Zwraca odpowiednią odpowiedź JSON z tokenem w przypadku sukcesu lub odpowiednim komunikatem w przypadku błędu.
 
-- register(req, res): Funkcja obsługi żądania HTTP typu POST, która obsługuje rejestrację nowego użytkownika. Sprawdza, czy podane dane są prawidłowe, hashowuje hasło (używając funkcji hashPassword), tworzy nowego użytkownika w bazie danych i generuje token JWT dla nowego użytkownika. Zwraca odpowiednią odpowiedź JSON z tokenem w przypadku sukcesu lub odpowiednim komunikatem w przypadku błędu.
+- `register(req, res)`: Funkcja obsługi żądania HTTP typu POST, która obsługuje rejestrację nowego użytkownika. Sprawdza, czy podane dane są prawidłowe, hashowuje hasło (używając funkcji hashPassword), tworzy nowego użytkownika w bazie danych i generuje token JWT dla nowego użytkownika. Zwraca odpowiednią odpowiedź JSON z tokenem w przypadku sukcesu lub odpowiednim komunikatem w przypadku błędu.
 
-- getUser(req, res, next): Middleware (funkcja pośrednicząca) do pobrania informacji o użytkowniku na podstawie req.authenticatedId i przekazania go do następnej funkcji obsługi. Jeśli użytkownik nie zostanie znaleziony, zwracane jest odpowiednie zgłoszenie błędu.
+- `getUser(req, res, next)`: Middleware (funkcja pośrednicząca) do pobrania informacji o użytkowniku na podstawie req.authenticatedId i przekazania go do następnej funkcji obsługi. Jeśli użytkownik nie zostanie znaleziony, zwracane jest odpowiednie zgłoszenie błędu.
 
-- getUserHistory(req, res): Funkcja obsługi żądania HTTP typu GET, która pobiera historię użytkownika na podstawie req.authenticatedId i zwraca odpowiedź JSON zawierającą historię użytkownika. Jeśli użytkownik lub historia nie zostaną znalezione, zwracane są odpowiednie zgłoszenia błędów.
+- `getUserHistory(req, res)`: Funkcja obsługi żądania HTTP typu GET, która pobiera historię użytkownika na podstawie req.authenticatedId i zwraca odpowiedź JSON zawierającą historię użytkownika. Jeśli użytkownik lub historia nie zostaną znalezione, zwracane są odpowiednie zgłoszenia błędów.
 ```js
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -253,14 +253,14 @@ exports.getUserHistory = async (req, res) =>{
 
 }
 ```
-#### `auth.model.js`
+#### Plik auth.model.js
 Ten kod definiuje moduł auth, który zawiera metody do interakcji z bazą danych MongoDB. Oto ich działanie:
 
--auth.getUserById(id): Funkcja, która pobiera użytkownika na podstawie podanego identyfikatora (id). Wykorzystuje metodę findOne z kolekcji "users" w bazie danych, aby znaleźć użytkownika o pasującym identyfikatorze. Zwraca obietnicę, która rozwiązuje się z wynikiem (użytkownikiem) lub odrzuca się z błędem.
+- `auth.getUserById(id)`: Funkcja, która pobiera użytkownika na podstawie podanego identyfikatora (id). Wykorzystuje metodę findOne z kolekcji "users" w bazie danych, aby znaleźć użytkownika o pasującym identyfikatorze. Zwraca obietnicę, która rozwiązuje się z wynikiem (użytkownikiem) lub odrzuca się z błędem.
 
--auth.getUserByEmail(email): Funkcja, która pobiera użytkownika na podstawie podanego adresu e-mail (email). Wykorzystuje metodę findOne z kolekcji "users" w bazie danych, aby znaleźć użytkownika o pasującym adresie e-mail. Zwraca obietnicę, która rozwiązuje się z wynikiem (użytkownikiem) lub odrzuca się z błędem.
+- `auth.getUserByEmail(email)`: Funkcja, która pobiera użytkownika na podstawie podanego adresu e-mail (email). Wykorzystuje metodę findOne z kolekcji "users" w bazie danych, aby znaleźć użytkownika o pasującym adresie e-mail. Zwraca obietnicę, która rozwiązuje się z wynikiem (użytkownikiem) lub odrzuca się z błędem.
 
--auth.registerUser(user): Funkcja, która rejestruje nowego użytkownika w bazie danych. Wykorzystuje metodę insertOne z kolekcji "users" w bazie danych, aby wstawić nowy dokument reprezentujący użytkownika. Przekazuje obiekt user zawierający dane użytkownika, takie jak email, hasło i nazwa użytkownika. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (nowo utworzonym użytkownikiem) lub odrzuca się z błędem.
+- `auth.registerUser(user)`: Funkcja, która rejestruje nowego użytkownika w bazie danych. Wykorzystuje metodę insertOne z kolekcji "users" w bazie danych, aby wstawić nowy dokument reprezentujący użytkownika. Przekazuje obiekt user zawierający dane użytkownika, takie jak email, hasło i nazwa użytkownika. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (nowo utworzonym użytkownikiem) lub odrzuca się z błędem.
 ```js
 var mongoUtil = require( '../mongoUtil' );
 let mongo = mongoUtil.getDb();
@@ -300,22 +300,22 @@ auth.registerUser = (user)=>{
 
 module.exports = auth
 ```
-#### `shop.controller.js`
+#### Plik shop.controller.js
 Ten kod definiuje kilka funkcji obsługujących operacje na sklepie. Oto ich działanie:
 
-- exports.getItems: Funkcja pobiera elementy sklepu na podstawie zapytania. Pobiera wartość stronicowania (pagination) z parametrów zapytania, a także opcjonalne zapytanie wyszukiwania (debouncedSearch) z ciała zapytania. Wykorzystuje model shop do wyszukiwania elementów, które pasują do podanego wyszukiwania (name) i mają liczbę większą od zera (quantity > 0). Wykorzystuje również wartość stronicowania, przeskakując odpowiednią ilość elementów i ograniczając liczbę zwracanych elementów do rozmiaru strony. Zwraca wynik w formacie JSON zawierający elementy sklepu i liczbę wszystkich elementów pasujących do zapytania.
+- `exports.getItems`: Funkcja pobiera elementy sklepu na podstawie zapytania. Pobiera wartość stronicowania (pagination) z parametrów zapytania, a także opcjonalne zapytanie wyszukiwania (debouncedSearch) z ciała zapytania. Wykorzystuje model shop do wyszukiwania elementów, które pasują do podanego wyszukiwania (name) i mają liczbę większą od zera (quantity > 0). Wykorzystuje również wartość stronicowania, przeskakując odpowiednią ilość elementów i ograniczając liczbę zwracanych elementów do rozmiaru strony. Zwraca wynik w formacie JSON zawierający elementy sklepu i liczbę wszystkich elementów pasujących do zapytania.
 
-- exports.addItemToShop: Funkcja dodaje nowy element do sklepu. Tworzy nowy obiekt shop na podstawie danych przesłanych w ciele żądania. Następnie próbuje zapisać nowy element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i nowo utworzony element. W przeciwnym razie zwraca błąd.
+- `exports.addItemToShop`: Funkcja dodaje nowy element do sklepu. Tworzy nowy obiekt shop na podstawie danych przesłanych w ciele żądania. Następnie próbuje zapisać nowy element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i nowo utworzony element. W przeciwnym razie zwraca błąd.
 
-- exports.updateItem: Funkcja aktualizuje istniejący element w sklepie. W zależności od danych przesłanych w ciele żądania, aktualizuje odpowiednie pola elementu shop. Następnie próbuje zapisać zaktualizowany element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowany element. W przeciwnym razie zwraca błąd.
+- `exports.updateItem`: Funkcja aktualizuje istniejący element w sklepie. W zależności od danych przesłanych w ciele żądania, aktualizuje odpowiednie pola elementu shop. Następnie próbuje zapisać zaktualizowany element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowany element. W przeciwnym razie zwraca błąd.
 
-- exports.getItem: Funkcja pobiera pojedynczy element sklepu na podstawie przekazanego identyfikatora (productId). Wykorzystuje model shop i metodę findById do wyszukania elementu o pasującym identyfikatorze. Jeśli element nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje znaleziony element do kolejnej funkcji obsługującej.
+- `exports.getItem`: Funkcja pobiera pojedynczy element sklepu na podstawie przekazanego identyfikatora (productId). Wykorzystuje model shop i metodę findById do wyszukania elementu o pasującym identyfikatorze. Jeśli element nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje znaleziony element do kolejnej funkcji obsługującej.
 
-- exports.getShopItems: Funkcja pobiera listę elementów sklepu na podstawie przekazanych identyfikatorów produktów (products). Iteruje przez każdy przekazany identyfikator, wyszukuje element o pasującym identyfikatorze za pomocą modelu shop i dodaje go do listy products. Jeśli któryś z elementów nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje listę znalezionych elementów do kolejnej funkcji obsługującej.
+- `exports.getShopItems`: Funkcja pobiera listę elementów sklepu na podstawie przekazanych identyfikatorów produktów (products). Iteruje przez każdy przekazany identyfikator, wyszukuje element o pasującym identyfikatorze za pomocą modelu shop i dodaje go do listy products. Jeśli któryś z elementów nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje listę znalezionych elementów do kolejnej funkcji obsługującej.
 
-- exports.buyProduct: Funkcja obsługuje operację zakupu pojedynczego produktu. Sprawdza, czy produkt jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, zmniejsza ilość produktu w sklepie, dodaje produkt do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
+- `exports.buyProduct`: Funkcja obsługuje operację zakupu pojedynczego produktu. Sprawdza, czy produkt jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, zmniejsza ilość produktu w sklepie, dodaje produkt do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
 
-- exports.buyProducts: Funkcja obsługuje operację zakupu wielu produktów. Sprawdza, czy każdy z produktów jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, aktualizuje ilość produktów w sklepie, dodaje produkty do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
+- `exports.buyProducts`: Funkcja obsługuje operację zakupu wielu produktów. Sprawdza, czy każdy z produktów jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, aktualizuje ilość produktów w sklepie, dodaje produkty do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
 
 ```js
 let shop = require("../models/shop");
@@ -496,12 +496,12 @@ exports.buyProducts = async (req, res) => {
     }
 };
 ```
-#### `user.controller.js`
+#### Plik user.controller.js
 Ten kod definiuje dwie funkcje obsługujące operacje na użytkowniku oraz zakupie przedmiotu w sklepie. Oto ich działanie:
 
-- exports.getUser: Funkcja pobiera informacje o użytkowniku na podstawie uwierzytelnionego identyfikatora (req.authenticatedId). Zwraca status "OK" i dane użytkownika w formacie JSON.
+- `exports.getUser`: Funkcja pobiera informacje o użytkowniku na podstawie uwierzytelnionego identyfikatora (req.authenticatedId). Zwraca status "OK" i dane użytkownika w formacie JSON.
 
-- exports.buyItem: Funkcja obsługuje operację zakupu przedmiotu przez użytkownika. Pobiera uwierzytelniony identyfikator użytkownika (req.authenticatedId) oraz identyfikator zakupionego przedmiotu (req.params.id). Następnie pobiera dane użytkownika i przedmiotu z odpowiednich modeli (userData i product). Sprawdza, czy ilość przedmiotu w sklepie jest większa lub równa żądanej ilości (req.body.quantity). Jeśli ilość jest niewystarczająca, zwraca błąd. Następnie, w ramach transakcji, zmniejsza ilość przedmiotu w sklepie o żądaną ilość. Dodaje również informacje o zakupionym przedmiocie do koszyka użytkownika. Po zakończeniu transakcji zapisuje zmiany w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowane dane użytkownika w formacie JSON. W przypadku błędu, zwraca odpowiedni błąd w formacie JSON.
+- `exports.buyItem`: Funkcja obsługuje operację zakupu przedmiotu przez użytkownika. Pobiera uwierzytelniony identyfikator użytkownika (req.authenticatedId) oraz identyfikator zakupionego przedmiotu (req.params.id). Następnie pobiera dane użytkownika i przedmiotu z odpowiednich modeli (userData i product). Sprawdza, czy ilość przedmiotu w sklepie jest większa lub równa żądanej ilości (req.body.quantity). Jeśli ilość jest niewystarczająca, zwraca błąd. Następnie, w ramach transakcji, zmniejsza ilość przedmiotu w sklepie o żądaną ilość. Dodaje również informacje o zakupionym przedmiocie do koszyka użytkownika. Po zakończeniu transakcji zapisuje zmiany w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowane dane użytkownika w formacie JSON. W przypadku błędu, zwraca odpowiedni błąd w formacie JSON.
 ```js
 let user = require("../models/user.js");
 let shop = require("../models/shop");
