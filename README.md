@@ -300,3 +300,246 @@ auth.registerUser = (user)=>{
 
 module.exports = auth
 ```
+#### shop.controller.js
+Ten kod definiuje kilka funkcji obsługujących operacje na sklepie. Oto ich działanie:
+
+- exports.getItems: Funkcja pobiera elementy sklepu na podstawie zapytania. Pobiera wartość stronicowania (pagination) z parametrów zapytania, a także opcjonalne zapytanie wyszukiwania (debouncedSearch) z ciała zapytania. Wykorzystuje model shop do wyszukiwania elementów, które pasują do podanego wyszukiwania (name) i mają liczbę większą od zera (quantity > 0). Wykorzystuje również wartość stronicowania, przeskakując odpowiednią ilość elementów i ograniczając liczbę zwracanych elementów do rozmiaru strony. Zwraca wynik w formacie JSON zawierający elementy sklepu i liczbę wszystkich elementów pasujących do zapytania.
+
+- exports.addItemToShop: Funkcja dodaje nowy element do sklepu. Tworzy nowy obiekt shop na podstawie danych przesłanych w ciele żądania. Następnie próbuje zapisać nowy element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i nowo utworzony element. W przeciwnym razie zwraca błąd.
+
+- exports.updateItem: Funkcja aktualizuje istniejący element w sklepie. W zależności od danych przesłanych w ciele żądania, aktualizuje odpowiednie pola elementu shop. Następnie próbuje zapisać zaktualizowany element w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowany element. W przeciwnym razie zwraca błąd.
+
+- exports.getItem: Funkcja pobiera pojedynczy element sklepu na podstawie przekazanego identyfikatora (productId). Wykorzystuje model shop i metodę findById do wyszukania elementu o pasującym identyfikatorze. Jeśli element nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje znaleziony element do kolejnej funkcji obsługującej.
+
+- exports.getShopItems: Funkcja pobiera listę elementów sklepu na podstawie przekazanych identyfikatorów produktów (products). Iteruje przez każdy przekazany identyfikator, wyszukuje element o pasującym identyfikatorze za pomocą modelu shop i dodaje go do listy products. Jeśli któryś z elementów nie zostanie znaleziony, zwraca błąd. W przeciwnym razie przekazuje listę znalezionych elementów do kolejnej funkcji obsługującej.
+
+- exports.buyProduct: Funkcja obsługuje operację zakupu pojedynczego produktu. Sprawdza, czy produkt jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, zmniejsza ilość produktu w sklepie, dodaje produkt do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
+
+- exports.buyProducts: Funkcja obsługuje operację zakupu wielu produktów. Sprawdza, czy każdy z produktów jest dostępny w odpowiedniej ilości i czy użytkownik ma wystarczającą ilość punktów. Następnie rozpoczyna sesję transakcji, aktualizuje ilość produktów w sklepie, dodaje produkty do koszyka użytkownika i zapisuje historię zakupów. Jeśli wszystko przebiegnie pomyślnie, zwraca status "OK". W przeciwnym razie zwraca błąd.
+
+```js
+let shop = require("../models/shop");
+const conn = require("../models/connections");
+const history = require("../models/history");
+
+exports.getItems = async (req, res) => {
+    let pageSize = 25;
+    let skip = (req.params.pagination - 1) * pageSize;
+    let search = req.body.debouncedSearch;
+    if (search == null) {
+        search = "";
+    }
+    let items = await shop
+        .find({ name: { $regex: search, $options: "x" }, quantity: { $gt: 0 } } )
+        .skip(skip)
+        .limit(pageSize);
+    let imemCount = await shop.countDocuments({
+        name: { $regex: search, $options: "i" },
+    });
+
+    return res
+        .status(200)
+        .send({ status: "OK", items: items, itemCount: imemCount });
+};
+
+exports.addItemToShop = async (req, res) => {
+    console.log(req.body);
+    let item = new shop({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description || "",
+        image: req.body.image || "",
+        category: req.body.category,
+        quantity: req.body.quantity,
+    });
+    try {
+        const newItem = await item.save();
+        res.status(200).send({ status: "OK", item: newItem });
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ message: err.message });
+    }
+};
+
+exports.updateItem = async (req, res) => {
+    if (req.body.name != null) {
+        res.item.name = req.body.name;
+    }
+    if (req.body.price != null) {
+        res.item.price = req.body.price;
+    }
+    if (req.body.description != null) {
+        res.item.description = req.body.description;
+    }
+    if (req.body.image != null) {
+        res.item.image = req.body.image;
+    }
+    if (req.body.category != null) {
+        res.item.category = req.body.category;
+    }
+    if (req.body.quantity != null) {
+        res.item.quantity = req.body.quantity;
+    }
+    try {
+        const updatedItem = await res.item.save();
+        res.status(200).send({ status: "OK", item: updatedItem });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+exports.getItem = async (req, res, next) => {
+    let item;
+    try {
+        item = await shop.findById(req.body.productId);
+        if (item == null) {
+            return res.status(404).json({ message: "Cannot find item" });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+    res.item = item;
+    next();
+};
+
+exports.getShopItems = async (req, res, next) => {
+    let products = [];
+    for (let product of req.body.products) {
+        let item;
+        try {
+            item = await shop.findById(product._id);
+            if (item == null) {
+                return res.status(404).json({ message: "Cannot find item" });
+            }
+            products.push(item);
+        } catch (err) {
+            return res.status(500).json({ message: err.message });
+        }
+    }
+    res.items = products;
+    next();
+};
+
+exports.buyProduct = async (req, res) => {
+    const product = res.item;
+    if (product.quantity < 0) {
+        return res.status(400).json({ message: "Not enough items" });
+    }
+    if (product.quantity < 1) {
+        return res.status(400).json({ message: "Not enough items" });
+    }
+    const user = res.user;
+    const session = await conn.startSession();
+    let productHistory = new history();
+    try {
+        session.startTransaction();
+        product.quantity -= 1;
+        user.cart.push(product);
+        productHistory.user = user._id;
+        productHistory.products.push({ product: product._id, quantity: 1 });
+        productHistory.date = Date.now();
+        await productHistory.save({ session: session });
+        await user.save({ session: session });
+        await product.save({ session: session });
+        await session.commitTransaction();
+        return res.status(200).json({ status: "OK" });
+    } catch (err) {
+        await session.abortTransaction();
+        return res.status(500).json({ message: err.message });
+    } finally {
+        session.endSession();
+    }
+};
+
+exports.buyProducts = async (req, res) => {
+    const products = res.items;
+    for (let productIndex in products) {
+        let product = products[productIndex];
+        if (
+            product.quantity < 0 ||
+            req.body.products[productIndex].quantity > product.quantity
+        ) {
+            return res.status(400).json({ message: "Not enough items" });
+        }
+    }
+
+    const user = res.user;
+    const session = await conn.startSession();
+    let productHistory = new history();
+
+    try {
+        session.startTransaction();
+        productHistory.user = user._id;
+        for (let productIndex in products) {
+            let product = products[productIndex];
+            product.quantity -= req.body.products[productIndex].quantity;
+            user.cart.push({
+                product: product._id,
+                quantity: req.body.products[productIndex].quantity,
+            });
+            productHistory.products.push({
+                product: product._id,
+                quantity: req.body.products[productIndex].quantity,
+            });
+            await product.save({ session: session });
+        }
+        productHistory.date = Date.now();
+        await productHistory.save({ session: session });
+        await user.save({ session: session });
+        await session.commitTransaction();
+        return res.status(200).json({ status: "OK" });
+    } catch (err) {
+        await session.abortTransaction();
+        return res.status(500).json({ message: err.message });
+    } finally {
+        session.endSession();
+    }
+};
+```
+#### user.controller.js
+Ten kod definiuje dwie funkcje obsługujące operacje na użytkowniku oraz zakupie przedmiotu w sklepie. Oto ich działanie:
+
+- exports.getUser: Funkcja pobiera informacje o użytkowniku na podstawie uwierzytelnionego identyfikatora (req.authenticatedId). Zwraca status "OK" i dane użytkownika w formacie JSON.
+
+- exports.buyItem: Funkcja obsługuje operację zakupu przedmiotu przez użytkownika. Pobiera uwierzytelniony identyfikator użytkownika (req.authenticatedId) oraz identyfikator zakupionego przedmiotu (req.params.id). Następnie pobiera dane użytkownika i przedmiotu z odpowiednich modeli (userData i product). Sprawdza, czy ilość przedmiotu w sklepie jest większa lub równa żądanej ilości (req.body.quantity). Jeśli ilość jest niewystarczająca, zwraca błąd. Następnie, w ramach transakcji, zmniejsza ilość przedmiotu w sklepie o żądaną ilość. Dodaje również informacje o zakupionym przedmiocie do koszyka użytkownika. Po zakończeniu transakcji zapisuje zmiany w bazie danych. Jeśli operacja zakończy się pomyślnie, zwraca status "OK" i zaktualizowane dane użytkownika w formacie JSON. W przypadku błędu, zwraca odpowiedni błąd w formacie JSON.
+```js
+let user = require("../models/user.js");
+let shop = require("../models/shop");
+const mongoose = require("mongoose");
+exports.getUser = async (req, res) => {
+    return res.status(200).send({ status: "OK", user: req.authenticatedId });
+};
+
+exports.buyItem = async (req, res) => {
+    let userData, product;
+    try {
+        userData = await userData.findById(req.authenticatedId);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+    try {
+        product = await shop.findById(req.params.id);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+    if (product.quantity < req.body.quantity) {
+        res.status(400).json({ message: "Not enough items in stock" });
+    }
+    product.quantity -= req.body.quantity;
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        userData.cart.push({ ...product._doc, quantity: req.body.quantity });
+        await userData.save({ session: session });
+        await product.save({ session: session });
+        await session.commitTransaction();
+        session.endSession();
+        res.status(200).send({ status: "OK", user: userData });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        res.status(400).json({ message: err.message });
+    }
+};
+```
