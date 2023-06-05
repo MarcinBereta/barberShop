@@ -27,7 +27,7 @@ Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak:
 - NextJs
 
 ## Struktura projektu
-- Katalog backend: zawiera on całą logikę projektu, wszystkie operacje
+- Katalog backend: zawiera on implementację logiki projektu oraz bazy danych
 - Katalog frontend: zawiera implemetację wyglądu aplikacji
 
 ## Opis backendu
@@ -568,11 +568,11 @@ module.exports = conn;
 Model ten definiuje schemat dla kolekcji "purchaseHsitory" w bazie danych.
 Schemat zawiera pola takie jak:
 
-- user - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "users". Jest wymagane (required: true).
-- products - tablica obiektów, gdzie każdy obiekt zawiera:
-- product - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "products". Jest wymagane (required: true).
-- quantity - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
-- date - pole typu Date, które reprezentuje datę zakupu. Jest wymagane (required: true).
+- `user` - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "users". Jest wymagane (required: true).
+- `products` - tablica obiektów, gdzie każdy obiekt zawiera:
+- `product` - pole typu ObjectId, które odnosi się do dokumentu w kolekcji "products". Jest wymagane (required: true).
+- `quantity` - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
+- `date` - pole typu Date, które reprezentuje datę zakupu. Jest wymagane (required: true).
 ```js
 const mongoose = require("mongoose");
 
@@ -608,12 +608,12 @@ module.exports = mongoose.model("history", purchaseHistory);
 Model ten definiuje schemat dla kolekcji "products" w bazie danych.
 Schemat zawiera pola takie jak:
 
-- name - pole typu String, które reprezentuje nazwę produktu. Jest wymagane (required: true).
-- price - pole typu Number, które reprezentuje cenę produktu. Jest wymagane (required: true).
-- description - pole typu String, które reprezentuje opis produktu. Nie jest wymagane (required: false).
-- image - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
-- category - pole typu String, które reprezentuje kategorię produktu. Jest wymagane (required: true). Może przyjąć wartości: "shampoo", "conditioner", "mask", "oils". Jest również - zdefiniowany enum, który ogranicza wartości do tych podanych.
-- quantity - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
+- `name` - pole typu String, które reprezentuje nazwę produktu. Jest wymagane (required: true).
+- `price` - pole typu Number, które reprezentuje cenę produktu. Jest wymagane (required: true).
+- `description` - pole typu String, które reprezentuje opis produktu. Nie jest wymagane (required: false).
+- `image` - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
+- `category` - pole typu String, które reprezentuje kategorię produktu. Jest wymagane (required: true). Może przyjąć wartości: "shampoo", "conditioner", "mask", "oils". Jest również - zdefiniowany enum, który ogranicza wartości do tych podanych.
+- `quantity` - pole typu Number, które reprezentuje ilość produktów. Jest wymagane (required: true).
 ```js
 const mongoose = require("mongoose");
 
@@ -761,19 +761,19 @@ module.exports = products
 Model ten definiuje schemat dla kolekcji "users" w bazie danych.
 Schemat zawiera pola takie jak:
 
-- username - pole typu String, które reprezentuje nazwę użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
-- password - pole typu String, które reprezentuje hasło użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
-- email - pole typu String, które reprezentuje email użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
-- image - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
-- premisson - pole typu Number, które reprezentuje pozwolenia. Nie jest wymagane (required: false) i jest zdefiniowane domyślnie na 1. 
-- cart - pole typu [usersProductsSchema], które reprezentuje zakupy w koszyku.
+- `username` - pole typu String, które reprezentuje nazwę użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- `password` - pole typu String, które reprezentuje hasło użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- `email` - pole typu String, które reprezentuje email użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- `image` - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
+- `premisson` - pole typu Number, które reprezentuje pozwolenia. Nie jest wymagane (required: false) i jest zdefiniowane domyślnie na 1. 
+- `cart` - pole typu [usersProductsSchema], które reprezentuje zakupy w koszyku.
 
 Dodatkowo mamt zdefiniowany schemat "usersProductsSchema". Zawiera on takie pola jak:
 
-- product - obiekt typu produkt. Jest wymagany (required: true).
+- `product` - obiekt typu produkt. Jest wymagany (required: true).
 
-- quantity - pole typu Number, które reprezentuje liczbę produktów. Jest wymagane (required: true).
-- 
+- `quantity` - pole typu Number, które reprezentuje liczbę produktów. Jest wymagane (required: true).
+
 ```js
 const mongoose = require("mongoose");
 const validateEmail = function (email) {
@@ -822,4 +822,144 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("users", userSchema);
+```
+### Katalog routes
+Zawiera moduły, które definiują zestaw endpointów dostępnych w aplikacji. Są one odpowiedzialne za obsługę żądań klienta i przekierowywanie ich do odpowiednich funkcji obsługujących.
+
+#### Plik auth.js
+Poniżej znajduje się opis każdej zdefiniowanej ścieżki:
+
+- `POST /auth/verify`: Ta ścieżka wymaga walidacji tokenu JWT użytkownika za pomocą middleware authUtils.validateToken. Jeśli token jest poprawny, kontroler auth.verify zostanie wywołany.
+
+- `POST /auth/login`: Ta ścieżka obsługuje logowanie użytkownika. Gdy żądanie zostanie wysłane do tej ścieżki, kontroler auth.login zostanie wywołany.
+
+- `POST /auth/register`: Ta ścieżka obsługuje rejestrację nowego użytkownika. Gdy żądanie zostanie wysłane do tej ścieżki, kontroler auth.register zostanie wywołany.
+
+```js
+const express = require('express');
+
+let router = express.Router()
+let auth = require('../controllers/auth.controller.js');
+
+// Use authUtils.validateToken middleware to validate user JWT token
+// It will be then available under req.authenticatedId in controller.
+
+let authUtils = require('../utils/authUtils');
+
+// Endpoints for "/auth" API route
+
+router.post("/verify", authUtils.validateToken, auth.verify)
+
+router.post("/login", auth.login)
+
+router.post("/register", auth.register)
+
+module.exports = router;
+```
+#### Plik shop.js
+
+Poniżej znajduje się opis każdej zdefiniowanej ścieżki:
+
+-`GET /getItems/:pagination`: Ta ścieżka obsługuje pobieranie przedmiotów związanych ze sklepem. Parametr pagination określa numer strony wyników. Kontroler shop.getItems zostanie wywołany w celu obsługi tego żądania.
+
+- `POST /buyItem`: Ta ścieżka obsługuje zakup pojedynczego przedmiotu ze sklepu. Przed wykonaniem zakupu, token JWT użytkownika jest sprawdzany za pomocą middleware authUtils.validateToken, a następnie kontrolery user.getUser, shop.getItem i shop.buyProduct są wywoływane w kolejności.
+
+- `POST /buyItems`: Ta ścieżka obsługuje zakup wielu przedmiotów ze sklepu. Podobnie jak w przypadku buyItem, token JWT użytkownika jest sprawdzany, a następnie kolejne kontrolery user.getUser, shop.getShopItems i shop.buyProducts są wywoływane.
+
+- `POST /addProduct`: Ta ścieżka umożliwia dodanie nowego przedmiotu do sklepu. Podobnie jak w poprzednich przypadkach, token JWT użytkownika jest sprawdzany, a kontroler shop.addItemToShop jest wywoływany.
+
+```js
+const express = require("express");
+
+let router = express.Router();
+let shop = require("../controllers/shop.controller.js");
+let user = require("../controllers/auth.controller.js");
+// Use authUtils.validateToken middleware to validate user JWT token
+// It will be then available under req.authenticatedId in controller.
+
+let authUtils = require("../utils/authUtils");
+
+// Endpoints for "/auth" API route
+
+router.get("/getItems/:pagination", shop.getItems);
+
+router.post(
+    "/buyItem",
+    authUtils.validateToken,
+    user.getUser,
+    shop.getItem,
+    shop.buyProduct
+);
+
+router.post(
+    "/buyItems",
+    authUtils.validateToken,
+    user.getUser,
+    shop.getShopItems,
+    shop.buyProducts
+);
+
+router.post("/addProduct", authUtils.validateToken, shop.addItemToShop);
+
+module.exports = router;
+```
+#### Plik user.js
+Poniżej znajduje się opis tej zdefiniowanej ścieżki:
+
+- `GET /getUserData`: Ta ścieżka obsługuje pobieranie danych użytkownika. Przed dostępem do tych danych, token JWT użytkownika jest sprawdzany za pomocą middleware authUtils.validateToken. Jeśli token jest ważny i autoryzacja przebiega pomyślnie, kontroler user.getUser jest wywoływany w celu obsługi tego żądania.
+
+```js
+const express = require('express');
+
+let router = express.Router()
+let user = require('../controllers/user.controller.js');
+
+// Use authUtils.validateToken middleware to validate user JWT token
+// It will be then available under req.authenticatedId in controller.
+
+let authUtils = require('../utils/authUtils');
+
+// Endpoints for "/auth" API route
+
+router.get("/getUserData", authUtils.validateToken, user.getUser)
+
+module.exports = router;
+```
+### Katalog utils
+katalog zawiera funkcję pomocniczą związaną z autentykacją.
+
+#### Plik authUtils.js
+Metoda eksportuje funkcję validateToken, która jest wykorzystywana jako pośrednik (middleware) w ścieżkach routera do autoryzacji.
+
+Funkcja validateToken przyjmuje trzy argumenty: req (obiekt z żądaniem), res (obiekt odpowiedzi) i next (funkcję, która przechodzi do kolejnego pośrednika lub obsługuje końcową funkcję obsługi żądania). Sprawdza, czy w nagłówkach żądania znajduje się token autoryzacyjny. Jeśli token nie istnieje lub jest pusty, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Następnie, próbuje zweryfikować token JWT za pomocą funkcji jwt.verify(). W przypadku błędu (np. nieprawidłowy token lub wygasły token), zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Jeśli weryfikacja tokena powiedzie się, sprawdza, czy wewnątrz zdekodowanego tokenu znajduje się identyfikator (id). Jeśli tak, przypisuje go do req.authenticatedId, co pozwala na dostęp do zautoryzowanego identyfikatora w kolejnych funkcjach obsługi. Jeśli token został pomyślnie zweryfikowany i zawiera identyfikator, przechodzi do kolejnej funkcji pośredniczącej lub do końcowej funkcji obsługi żądania za pomocą next(). Jeśli token nie zawiera identyfikatora lub wystąpił inny błąd, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED".
+
+```js
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+const authModel = require("../controllers/auth.model");
+exports.validateToken = async (req, res, next) => {
+    console.log("Validating token...");
+    let token = req.headers.authorization;
+    if (!token || token == "") {
+        return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });
+    }
+    let decoded = "";
+    console.log("Validating token...2");
+
+    try {
+        decoded = jwt.verify(token, "123qweascxzgwwegdsadqrgyeds");
+    } catch (error) {
+        return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });
+    }
+    console.log("Validating token...3");
+
+    if (decoded.id) {
+        console.log("Validating token...4");
+
+        req.authenticatedId = decoded.id;
+        next();
+    } else {
+        return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });
+    }
+};
 ```
