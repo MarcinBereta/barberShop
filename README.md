@@ -1,24 +1,25 @@
 # Projekt zaliczeniowy - "barberShop"
 
-## Skład grupy:
+## Zawarte informacje
+* [Skład grupy](#skład-grupy)
+* [Temat](#temat)
+* [Technologia](#technologia)
+* [Uruchomienie aplikacji](#uruchomienie-aplikacji)
+* [Struktura projektu](#struktura-projektu)
+* [Opis backendu](#opis-backendu)
 
-Adrian Żerebiec:  zerebiec@student.agh.edu.pl
+## Skład grupy
+
+Adrian Żerebiec: zerebiec@student.agh.edu.pl
 
 Marcin Bereta: mbereta@student.agh.edu.pl
 
-## Temat:
+## Temat
 
-Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak: 
+Jako projekt wybraliśmy implementację sklepu z artykułami fryzjerskimi.
+Jest to aplikacja pozwalająca użytkownikowi na zakup produktów, gdzie transakcje odbywają się z pomocą bazy danych.
 
-- szampony 
-
-- maski
-
-- olejki
-
-- odżywki
-
-## Technologia:
+## Technologia
 
 - MongoDB(implementacja za pomocą frameworku Mongoose)
 
@@ -26,12 +27,29 @@ Projekt polega na stworzeniu sklepu z artykułami fryzjerskimi takimi jak:
 
 - NextJs
 
+## Uruchomienie aplikacji
+
+Aby uruchomić aplikację musimy z pomocą komendy `npm run dev` włączyć serwer a następnie aplikację.
+
 ## Struktura projektu
-- Katalog backend: zawiera on implementację logiki projektu oraz bazy danych
-- Katalog frontend: zawiera implemetację wyglądu aplikacji
+### Katalog backend 
+Zawiera on implementację logiki projektu oraz bazy danych. Zawierają się w nim katalogi:
+
+- controllers
+- models
+- routes
+- utils
+- pliki: mongoUtils.js, server.js
+
+### Katalog frontend/barber 
+Zawiera implemetację wyglądu aplikacji. Zawarte w nim katalogi to:
+
+- public
+- src
 
 ## Opis backendu
-Backend został zaimplemntowany z pomocą framework'a Express. Jako bazę danych wybraliśmy MongoDb i zaimplentowaliśmy z pomocą frameworku Mongoose
+Backend został zaimplemntowany z pomocą framework'a Express. Jako bazę danych wybraliśmy MongoDb i zaimplentowaliśmy z pomocą frameworku Mongoose.
+
 ### Plik server.js
 Moduł ten służy do nasłuchiwania oraz nawiązywania połączenia na porcie 4000
 ```js
@@ -768,7 +786,7 @@ Schemat zawiera pola takie jak:
 - `premisson` - pole typu Number, które reprezentuje pozwolenia. Nie jest wymagane (required: false) i jest zdefiniowane domyślnie na 1. 
 - `cart` - pole typu [usersProductsSchema], które reprezentuje zakupy w koszyku.
 
-Dodatkowo mamt zdefiniowany schemat "usersProductsSchema". Zawiera on takie pola jak:
+Dodatkowo mamy zdefiniowany schemat "usersProductsSchema". Zawiera on takie pola jak:
 
 - `product` - obiekt typu produkt. Jest wymagany (required: true).
 
@@ -930,8 +948,7 @@ katalog zawiera funkcję pomocniczą związaną z autentykacją.
 
 #### Plik authUtils.js
 Metoda eksportuje funkcję validateToken, która jest wykorzystywana jako pośrednik (middleware) w ścieżkach routera do autoryzacji.
-
-Funkcja validateToken przyjmuje trzy argumenty: req (obiekt z żądaniem), res (obiekt odpowiedzi) i next (funkcję, która przechodzi do kolejnego pośrednika lub obsługuje końcową funkcję obsługi żądania). Sprawdza, czy w nagłówkach żądania znajduje się token autoryzacyjny. Jeśli token nie istnieje lub jest pusty, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Następnie, próbuje zweryfikować token JWT za pomocą funkcji jwt.verify(). W przypadku błędu (np. nieprawidłowy token lub wygasły token), zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Jeśli weryfikacja tokena powiedzie się, sprawdza, czy wewnątrz zdekodowanego tokenu znajduje się identyfikator (id). Jeśli tak, przypisuje go do req.authenticatedId, co pozwala na dostęp do zautoryzowanego identyfikatora w kolejnych funkcjach obsługi. Jeśli token został pomyślnie zweryfikowany i zawiera identyfikator, przechodzi do kolejnej funkcji pośredniczącej lub do końcowej funkcji obsługi żądania za pomocą next(). Jeśli token nie zawiera identyfikatora lub wystąpił inny błąd, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED".
+- `validateToken` -  przyjmuje trzy argumenty: req (obiekt z żądaniem), res (obiekt odpowiedzi) i next (funkcję, która przechodzi do kolejnego pośrednika lub obsługuje końcową funkcję obsługi żądania). Sprawdza, czy w nagłówkach żądania znajduje się token autoryzacyjny. Jeśli token nie istnieje lub jest pusty, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Następnie, próbuje zweryfikować token JWT za pomocą funkcji jwt.verify(). W przypadku błędu (np. nieprawidłowy token lub wygasły token), zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED". Jeśli weryfikacja tokena powiedzie się, sprawdza, czy wewnątrz zdekodowanego tokenu znajduje się identyfikator (id). Jeśli tak, przypisuje go do req.authenticatedId, co pozwala na dostęp do zautoryzowanego identyfikatora w kolejnych funkcjach obsługi. Jeśli token został pomyślnie zweryfikowany i zawiera identyfikator, przechodzi do kolejnej funkcji pośredniczącej lub do końcowej funkcji obsługi żądania za pomocą next(). Jeśli token nie zawiera identyfikatora lub wystąpił inny błąd, zwraca odpowiedź z kodem stanu 200 i informacją o błędzie "UNAUTHORIZED".
 
 ```js
 const dotenv = require("dotenv");
