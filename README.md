@@ -651,7 +651,9 @@ module.exports = mongoose.model("products", productSchema);
 #### Plik shop.model.js
 Ten kod definiuje moduł products, który eksportuje funkcje odpowiedzialne za operacje na kolekcji "products" w bazie danych.
 Funkcje dostępne w module products to:
+
 -`getAllProducts()`: Pobiera wszystkie produkty z kolekcji "products". Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (tablicą produktów) lub odrzuca się w przypadku błędu.
+
 -`getProductById(id)`: Pobiera produkt z kolekcji "products" na podstawie podanego identyfikatora (_id). Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (znalezionym produktem) lub odrzuca się w przypadku błędu.
 
 -`addProduct(product)`: Dodaje nowy produkt do kolekcji "products" na podstawie podanych danych produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (dodanym produktem) lub odrzuca się w przypadku błędu.
@@ -756,7 +758,22 @@ products.addProductToCustomer = (product, customer)=>{
 module.exports = products
 ```
 #### Plik user.js
+Model ten definiuje schemat dla kolekcji "users" w bazie danych.
+Schemat zawiera pola takie jak:
 
+- username - pole typu String, które reprezentuje nazwę użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- password - pole typu String, które reprezentuje hasło użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- email - pole typu String, które reprezentuje email użytkownika. Jest wymagane (required: true) i unikalne (unique: true).
+- image - pole typu String, które reprezentuje ścieżkę do obrazka produktu. Nie jest wymagane (required: false).
+- premisson - pole typu Number, które reprezentuje pozwolenia. Nie jest wymagane (required: false) i jest zdefiniowane domyślnie na 1. 
+- cart - pole typu [usersProductsSchema], które reprezentuje zakupy w koszyku.
+
+Dodatkowo mamt zdefiniowany schemat "usersProductsSchema". Zawiera on takie pola jak:
+
+- product - obiekt typu produkt. Jest wymagany (required: true).
+
+- quantity - pole typu Number, które reprezentuje liczbę produktów. Jest wymagane (required: true).
+- 
 ```js
 const mongoose = require("mongoose");
 const validateEmail = function (email) {
