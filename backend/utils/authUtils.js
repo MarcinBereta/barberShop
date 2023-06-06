@@ -1,6 +1,5 @@
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-const authModel = require("../controllers/auth.model");
 exports.validateToken = async (req, res, next) => {
     console.log("Validating token...");
     let token = req.headers.authorization;
