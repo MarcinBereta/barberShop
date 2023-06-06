@@ -980,3 +980,1198 @@ exports.validateToken = async (req, res, next) => {
     }
 };
 ```
+## Opis frontendu
+Do implementacji frontendu użyliśmy frameworku NextJS. Z racji, iż najważniejsza część projektu polega na stworzeniu logiki w backendzie, frontend zostanie opisany ogólniej, często bez konkretnego tłumaczenia co robią poszczególne elementy.
+
+### Katalog public
+
+#### styles/index.scss
+```scss
+@import './components/layout.scss';
+@import './components/products.scss';
+@import './components/basket.scss';
+```
+#### styles/components/basket.scss
+```scss
+.basketMain {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    margin: 5px;
+    justify-content: space-between;
+    & > div {
+        background-color: lavenderblush;
+        padding: 5px;
+        border-radius: 10px;
+        color: black;
+        cursor: pointer;
+    }
+}
+```
+#### styles/components/layout.scss
+```scss
+.header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 5vh;
+    background-color: lightslategray;
+}
+.header_logo {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header_dropdown {
+    width: 80%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 2rem;
+}
+.dropdownMain {
+    width: 40%;
+    position: absolute;
+}
+.dropdownMenu {
+    height: 40%;
+    position: absolute;
+}
+
+.inside-pagination-chevron {
+    background-color: gray;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: gray;
+
+        i {
+            color: white;
+        }
+    }
+}
+
+.inside-pagination-chevron-disabled {
+    background-color: gray;
+    border-radius: 50%;
+    cursor: default;
+    width: 30px;
+    height: 30px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination-inside {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    background-color: gray;
+    padding: 5px 5px 5px 5px;
+    border-radius: 19px;
+    margin-top: 0px;
+    font-weight: 500;
+    margin-bottom: 0px;
+    -webkit-box-shadow: 0px 0px 50px -6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 50px -6px rgba(0, 0, 0, 0.2);
+
+    .pagination-chevron {
+        background-color: gray;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        i {
+            user-select: none;
+        }
+
+        &:hover {
+            background-color: gray;
+
+            i {
+                color: white;
+            }
+        }
+    }
+
+    .pagination-chevron-disabled {
+        background-color: gray;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        pointer-events: none;
+    }
+
+    li {
+        display: inline-block;
+        border-radius: 2px;
+        text-align: center;
+        vertical-align: top;
+        height: 30px;
+
+        a {
+            background-color: transparent;
+            display: inline-block;
+            font-size: 0.9rem;
+            line-height: 30px;
+            transition: all 0.2s;
+
+            &:hover {
+                color: #0090ff;
+                font-size: 130%;
+            }
+        }
+
+        &.active a {
+            font-size: 130%;
+            font-weight: 500;
+            color: white;
+        }
+
+        i {
+            font-size: 2rem;
+        }
+    }
+
+    li.pages ul li {
+        display: inline-block;
+        float: none;
+    }
+}
+.loginForm {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    & > div {
+        width: 40%;
+        height: 5vh;
+        display: flex;
+        flex-direction: column;
+        & > input {
+            border-radius: 5px;
+            padding: 5px;
+            color: white;
+        }
+    }
+    & > button {
+        width: 40%;
+        height: 3vh;
+        border-radius: 5px;
+        background-color: gray;
+        color: white;
+        font-weight: 500;
+        transition: all 0.2s;
+        margin: 10px;
+        &:hover {
+            background-color: gray;
+            color: white;
+        }
+    }
+}
+```
+#### styles/components/products.scss
+```scss
+.products {
+    width: 100%;
+    height: auto;
+}
+
+.header-input {
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    & > input {
+        width: 40%;
+        height: 80%;
+        border-radius: 5px;
+        margin: 10px;
+        padding: 10px;
+    }
+}
+
+.productsTable {
+    width: 80%;
+    margin-left: 10%;
+}
+.productListItem {
+    text-align: center;
+    padding: 5px;
+}
+.productListItemButton {
+    @extend .productListItem;
+    background-color: gray;
+    border-radius: 10px;
+}
+.paginationContainer {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & > div {
+        width: 10%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+```
+
+### Katalog src
+
+#### components
+
+- Authorization/AuthorizationUtils.tsx
+```tsx
+//@ts-ignore
+import { serialize, parse } from 'cookie'
+import { verify } from '@/services/authService'
+
+const comparePermissions = (userPermissions: any, requiredPermissions: any) => {
+    let binaryUser = parseInt(userPermissions).toString(2)
+    let binaryRequired = parseInt(requiredPermissions).toString(2)
+
+    while (binaryUser.length != binaryRequired.length) {
+        if (binaryUser.length < binaryRequired.length) {
+            binaryUser = '0' + binaryUser
+        } else {
+            binaryRequired = '0' + binaryRequired
+        }
+    }
+
+    let authenticationSuccess = false
+
+    for (let i = 0; i < binaryUser.length; i++) {
+        if (binaryUser[i] == binaryRequired[i] && binaryUser[i] == '1') {
+            authenticationSuccess = true
+        }
+    }
+
+    return authenticationSuccess
+}
+
+export const notAuthenticatedVerification = async (
+    req: any,
+    pageProps: any,
+    permissions?: number
+) => {
+    let cookies = parse(req.headers?.cookie || '')
+
+    if (!cookies.jwt_token) {
+        return {
+            props: {
+                ...pageProps,
+                xuser: null,
+            },
+        }
+    }
+
+    let response: any = await verify(cookies.jwt_token)
+
+    return {
+        props: {
+            ...pageProps,
+            xuser: response.user || null,
+            token: cookies.jwt_token,
+        },
+    }
+}
+
+export const authenticatedVerification = async (
+    req: any,
+    pageProps: any,
+    permissions?: number
+) => {
+    let cookies = parse(req.headers?.cookie || '')
+
+    if (!cookies.jwt_token) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/login',
+            },
+            props: {
+                ...pageProps,
+                xuser: null,
+            },
+        }
+    }
+
+    let verification: any = await verify(cookies.jwt_token)
+    return {
+        props: {
+            xuser: verification.user,
+            token: cookies.jwt_token,
+            ...pageProps,
+        },
+    }
+}
+
+export const loginVerification = async (
+    req: any,
+    res: any,
+    pageProps: any,
+    permissions?: any
+) => {
+    let cookies = parse(req.headers?.jwt_token || '')
+
+    if (!cookies.jwt_token) {
+        const cookie = serialize('jwt_token', pageProps.token, {
+            maxAge: 24 * 7 * 60 * 60,
+            expires: new Date(Date.now() + 24 * 7 * 60 * 60 * 1000),
+            httpOnly: true,
+            path: '/',
+            sameSite: 'lax',
+        })
+        res.setHeader('Set-Cookie', cookie)
+        let verification: any = await verify(pageProps.token)
+        console.log(verification)
+        if (verification.status != 'OK') {
+            return {
+                redirect: {
+                    permanent: false,
+                    destination: '/login',
+                },
+                props: {
+                    ...pageProps,
+                    xuser: null,
+                },
+            }
+        }
+        return {
+            redirect: {
+                permanent: false,
+                destination: '/',
+            },
+            props: {
+                xuser: verification.user,
+                token: pageProps.token,
+            },
+        }
+    }
+
+    return {
+        redirect: {
+            permanent: false,
+            destination: '/login',
+        },
+        props: {
+            token: pageProps.token,
+            xuser: null,
+        },
+    }
+}
+
+export const logoutVerification = async (
+    req: any,
+    res: any,
+    pageProps: any
+) => {
+    const cookie = serialize('jwt_token', 'deleted', {
+        maxAge: -1,
+        httpOnly: true,
+        //secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        sameSite: 'lax',
+    })
+
+    res.setHeader('Set-Cookie', cookie)
+
+    return {
+        redirect: {
+            permanent: false,
+            destination: '/login',
+        },
+        props: {
+            xuser: null,
+        },
+    }
+}
+```
+- Basket/BasketMain.tsx
+```tsx
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { Layout } from '../Layout/Layout'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { BuyProducts } from '../../services/shopService'
+interface basketItem {
+    _id: number | string
+    name: string
+    price: number
+    quantity: number
+}
+
+const BasketMain = (props: any) => {
+    const router = useRouter()
+    const [basket, setBasket] = useState<basketItem[]>([])
+
+    useEffect(() => {
+        getBasket()
+    }, [])
+
+    const getBasket = async () => {
+        let basketData = await AsyncStorage.getItem('basket')
+        if (basketData == null) basketData = JSON.stringify([])
+        let basketArray = JSON.parse(basketData)
+        setBasket(basketArray)
+    }
+
+    const handleProductBuy = async (productIndex: number) => {
+        let sendData = {
+            price: basket[productIndex].price * basket[productIndex].quantity,
+            products: [
+                {
+                    _id: basket[productIndex]._id,
+                    quantity: basket[productIndex].quantity,
+                },
+            ],
+        }
+
+        let response: any = await BuyProducts(sendData, props.token)
+        if (response.status == 'OK') {
+            router.push({
+                pathname: '/',
+            })
+        } else {
+            alert(response.response.data.message)
+        }
+    }
+
+    const handleRemoveProduct = async (productIndex: number) => {
+        let basketData = await AsyncStorage.getItem('basket')
+        if (basketData == null) basketData = JSON.stringify([])
+        let basketArray = JSON.parse(basketData)
+        basketArray.splice(productIndex, 1)
+        await AsyncStorage.setItem('basket', JSON.stringify(basketArray))
+        setBasket(basketArray)
+    }
+
+    const removeBasket = async () => {
+        await AsyncStorage.setItem('basket', JSON.stringify([]))
+        setBasket([])
+    }
+
+    const handleBuyAll = async () => {
+        let sendData: {
+            price: number
+            products: {
+                _id: number | string
+                quantity: number
+            }[]
+        } = {
+            price: 0,
+            products: [],
+        }
+        basket.forEach((item: basketItem) => {
+            sendData.price += item.price * item.quantity
+            sendData.products.push({
+                _id: item._id,
+                quantity: item.quantity,
+            })
+        })
+
+        let response: any = await BuyProducts(sendData, props.token)
+        if (response.status == 'OK') {
+            removeBasket()
+            router.push({
+                pathname: '/',
+            })
+        } else {
+            alert(response.response.data.message)
+        }
+    }
+
+    return (
+        <Layout user={props.xuser}>
+            <div className="products">
+                {basket.map((item: basketItem, index: number) => (
+                    <div key={index} className="basketMain">
+                        Name: {item.name}
+                        {'\t'}
+                        Price: {item.price}
+                        {'\t'}
+                        Quantity: {item.quantity}
+                        <div
+                            onClick={() => {
+                                handleProductBuy(index)
+                            }}
+                        >
+                            Buy single product
+                        </div>
+                        <div
+                            onClick={() => {
+                                handleRemoveProduct(index)
+                            }}
+                        >
+                            Remove product
+                        </div>
+                    </div>
+                ))}
+                <div className="basketMain">
+                    <div
+                        onClick={() => {
+                            handleBuyAll()
+                        }}
+                    >
+                        Buy products
+                    </div>
+                    <div
+                        onClick={() => {
+                            removeBasket()
+                        }}
+                    >
+                        Remove products
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    )
+}
+
+export { BasketMain }
+```
+- Layout/Header.tsx
+```tsx
+import React, { useState, useEffect } from 'react'
+import Dropdown from 'react-dropdown'
+import { useRouter } from 'next/router'
+
+const Header = (props: any) => {
+    const router = useRouter()
+    const options = [
+        [
+            { value: '', label: 'Products' },
+            { value: 'addProduct', label: 'Add Product' },
+            { value: 'basket', label: 'basket' },
+            { value: 'logout', label: 'Logout' },
+            { value: 'shopHistory', label: 'history' },
+        ],
+        [
+            { value: '', label: 'Products' },
+            { value: 'basket', label: 'basket' },
+            { value: 'login', label: 'Login' },
+            { value: 'register', label: 'Register' },
+        ],
+    ]
+
+    const [currentValue, setCurrentValue] = useState(0)
+    const [userType, setUserType] = useState(0)
+    useEffect(() => {
+        console.log(props.user)
+        if (props.user != null && props.user != undefined) {
+            console.log(`User ${props.user}`)
+            setUserType(0)
+            if (router.pathname == '/products' || router.pathname == '/') {
+                setCurrentValue(0)
+            } else if (router.pathname == '/basket') {
+                setCurrentValue(1)
+            } else if (router.pathname == '/shopHistory') {
+                setCurrentValue(3)
+            }
+        } else {
+            setUserType(1)
+            if (router.pathname == '/products' || router.pathname == '/') {
+                setCurrentValue(0)
+            } else if (router.pathname == '/basket') {
+                setCurrentValue(1)
+            } else if (router.pathname == '/login') {
+                setCurrentValue(2)
+            } else if (router.pathname == '/register') {
+                setCurrentValue(3)
+            }
+        }
+    }, [])
+
+    return (
+        <div className="header">
+            <div className="header_logo">LOGO</div>
+            <div className="header_dropdown">
+                <div
+                    style={{
+                        width: '60%',
+                        backgroundColor: 'transparent',
+                    }}
+                ></div>
+                <Dropdown
+                    options={options[userType]}
+                    onChange={(e) => {
+                        router.push(`/${e.value}`)
+                    }}
+                    value={options[userType][currentValue]}
+                    placeholder="Menu"
+                    className="dropdownMain"
+                    menuClassName="dropDownMenu"
+                />
+            </div>
+        </div>
+    )
+}
+
+export { Header }
+```
+
+- Layout/Layout.tsx
+```tsx
+import React from 'react'
+import { Header } from './Header'
+
+const Layout = (props: any) => {
+    return (
+        <div className="site">
+            <Header user={props.user} />
+            {props.children}
+        </div>
+    )
+}
+
+export { Layout }
+```
+- Products/addProducts.tsx
+```tsx
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import { Layout } from '../Layout/Layout'
+import { addProduct } from '../../services/authService'
+
+const AddProduct = (props: any) => {
+    console.log(props)
+    const router = useRouter()
+    const [name, setName] = useState<string>('')
+    const [price, setPrice] = useState<number>(0)
+    const [quantity, setQuantity] = useState<number>(0)
+    const [category, setCategory] = useState<string>('')
+    const handleAddProduct = async () => {
+        if (name == '' || category == '') return
+        if (price < 0 || quantity < 0) return
+        console.log(name, price, quantity, category)
+        let res: any = await addProduct(
+            {
+                name: name,
+                price: price,
+                quantity: quantity,
+                category: category,
+            },
+            props.token
+        )
+        if (res.status == 'OK') {
+            router.push({
+                pathname: '/',
+            })
+        }
+    }
+
+    return (
+        <Layout>
+            <div className="loginForm">
+                <div>
+                    Name:
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setName(e.target.value)
+                        }}
+                    />
+                </div>
+                <div>
+                    Price:
+                    <input
+                        type="number"
+                        onChange={(e) => {
+                            setPrice(parseInt(e.target.value))
+                        }}
+                    />
+                </div>
+                <div>
+                    Quantity:
+                    <input
+                        type="number"
+                        onChange={(e) => {
+                            setQuantity(parseInt(e.target.value))
+                        }}
+                    />
+                </div>
+                <div>
+                    Category:
+                    <select onChange={(e) => setCategory(e.target.value)}>
+                        <option value="shampoo">Shampoo</option>
+                        <option value="conditioner">Hair conditioner</option>
+                        <option value="mask">Mask</option>
+                        <option value="oils">Oils</option>
+                    </select>
+                </div>
+                <button onClick={handleAddProduct}>Add product</button>
+            </div>
+        </Layout>
+    )
+}
+
+export { AddProduct }
+```
+- Register/RegisterMain.tsx
+```tsx
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { Layout } from '../Layout/Layout'
+import { useDebounce } from '../utils/useDebounce'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import { Pagination } from '../utils/Pagination'
+import { register } from '../../services/authService'
+const RegisterMain = (props: any) => {
+    console.log(props)
+    const router = useRouter()
+    const [userName, setUserName] = useState<string>()
+    const [password, setPassword] = useState<string>()
+    const [email, setEmail] = useState<string>()
+    const [confirmPassword, setConfirmPassword] = useState<string>()
+    const handleRegister = async () => {
+        console.log(userName)
+        console.log(password)
+        console.log(confirmPassword)
+        if (
+            userName == '' ||
+            password == '' ||
+            email == '' ||
+            confirmPassword == ''
+        )
+            return
+        if (password != confirmPassword) return
+        console.log('SENDING REGISTER')
+        let res: any = await register({
+            username: userName,
+            password: password,
+            email: email,
+        })
+        if (res.status == 'OK') {
+            router.push({
+                pathname: '/auth',
+                query: { token: res.data.token.toString() },
+            })
+        }
+    }
+
+    return (
+        <Layout>
+            <div className="loginForm">
+                <div>
+                    UserName:
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setUserName(e.target.value)
+                        }}
+                    />
+                </div>
+                <div>
+                    Email:
+                    <input
+                        type="text"
+                        onChange={(e) => {
+                            setEmail(e.target.value)
+                        }}
+                    />
+                </div>
+                <div>
+                    Password:
+                    <input
+                        type="password"
+                        onChange={(e) => {
+                            setPassword(e.target.value)
+                        }}
+                    />
+                </div>
+                <div>
+                    Confirm Password:
+                    <input
+                        type="password"
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value)
+                        }}
+                    />
+                </div>
+                <button onClick={handleRegister}>Register</button>
+                <button
+                    onClick={() => {
+                        router.push('/login')
+                    }}
+                >
+                    login
+                </button>
+            </div>
+        </Layout>
+    )
+}
+
+export { RegisterMain }
+```
+- Shop/ShopList.tsx
+```tsx
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { Layout } from '../Layout/Layout'
+import { useDebounce } from '../utils/useDebounce'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import { Pagination } from '../utils/Pagination'
+import { ShopListItem } from './ShopListItem'
+
+const ShopList = (props: any) => {
+    console.log(props)
+    const router = useRouter()
+
+    let [search, setSearch] = useState<string>('')
+    const debouncedSearch = useDebounce(search, 500)
+
+    useEffect(() => {
+        refreshSite(1)
+    }, [debouncedSearch])
+
+    const refreshSite = (page: number) => {
+        router.replace(
+            router.pathname +
+                '?page=' +
+                page +
+                '&debouncedsearch=' +
+                debouncedSearch
+        )
+    }
+
+    const setPage = (newPage: number): void => {
+        router.replace(
+            router.pathname +
+                '?page=' +
+                newPage +
+                '&debouncedsearch=' +
+                debouncedSearch
+        )
+    }
+
+    const generateHeader = (): React.ReactElement[] => {
+        let headerArr: React.ReactElement[] = []
+
+        let headerItems: string[] = [
+            'name',
+            'price',
+            'quantity',
+            'category',
+            'actions',
+        ]
+
+        headerItems.forEach((item: string, index: number) => {
+            headerArr.push(
+                <th className="productListHeaderItem">
+                    <div>{item}</div>
+                </th>
+            )
+        })
+        return headerArr
+    }
+
+    const generateUserItems = (): React.ReactElement[] => {
+        console.log(props)
+        let userItemsArr: React.ReactElement[] = []
+        let keyIndex = 0
+        for (let product of props.shopItems) {
+            userItemsArr.push(
+                <ShopListItem
+                    key={keyIndex}
+                    product={product}
+                    token={props.token}
+                    refreshSite={() => {
+                        refreshSite(1)
+                    }}
+                />
+            )
+            keyIndex++
+        }
+        return userItemsArr
+    }
+
+    return (
+        <Layout user={props.xuser}>
+            <div className="products">
+                <div className="header-input">
+                    <input
+                        type="text"
+                        className="search-inpu"
+                        placeholder="Search"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <PerfectScrollbar>
+                    <table className="productsTable">
+                        <thead>
+                            <tr className="productItem">{generateHeader()}</tr>
+                        </thead>
+                        <tbody>{generateUserItems()}</tbody>
+                    </table>
+                </PerfectScrollbar>
+                <div
+                    className="paginationContainer"
+                    style={{ marginTop: '10px' }}
+                >
+                    <Pagination
+                        inside={true}
+                        maxPages={
+                            Math.floor(props.itemCount / 25) == 0
+                                ? 1
+                                : props.itemCount / 25
+                        }
+                        currentPage={parseInt(props.page)}
+                        setPage={setPage}
+                    />
+                </div>
+            </div>
+        </Layout>
+    )
+}
+
+export { ShopList }
+```
+- Shop/ShopItemList
+```tsx
+import React from 'react'
+import { buyShopItem } from '../../services/shopService'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+const ShopListItem = ({
+    product,
+    token,
+    refreshSite,
+}: {
+    product: {
+        _id: number | string
+        name: string
+        price: number
+        quantity: number
+        category: string
+    }
+    token: string
+    refreshSite: () => void
+}) => {
+    const handlePress = async () => {
+        let basket = await AsyncStorage.getItem('basket')
+        if (basket == null) basket = JSON.stringify([])
+        let basketArray = JSON.parse(basket)
+        let itemExits = basketArray.find((item: any) => {
+            return item._id == product._id
+        })
+        if (itemExits) {
+            itemExits.quantity++
+        } else {
+            let tempProduct = {
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+            }
+            basketArray.push(tempProduct)
+        }
+
+        await AsyncStorage.setItem('basket', JSON.stringify(basketArray))
+        alert('Product added to basket')
+    }
+
+    return (
+        <tr className="productItem">
+            <td className="productListItem">{product.name}</td>
+            <td className="productListItem">{product.price}</td>
+            <td className="productListItem">{product.quantity}</td>
+            <td className="productListItem">{product.category}</td>
+
+            <td
+                className="productListItemButton"
+                style={{ cursor: 'pointer' }}
+                onClick={handlePress}
+            >
+                {/* <Link href={`/admin/app/groups/${item.id}`}> */}
+                Buy product
+                {/* </Link> */}
+            </td>
+        </tr>
+    )
+}
+
+export { ShopListItem }
+```
+- utils/Pagination.tsx
+```tsx
+import React from 'react'
+import clsx from 'clsx'
+
+//If use Inside of component set "inside" property in tag to true (ex. <Pagination inside={true} />"
+
+const Pagination = (props: any) => {
+    const generateItems = () => {
+        let children = []
+
+        for (let i = props.currentPage - 3; i <= props.currentPage + 3; i++) {
+            if (i == props.currentPage) {
+                children.push(
+                    <li key={i} className="active">
+                        <a>{i}</a>
+                    </li>
+                )
+            } else if (i >= 1 && i <= props.maxPages) {
+                if (Math.abs(props.currentPage - i) <= 2) {
+                    children.push(
+                        <li
+                            key={i}
+                            className="waves-effect"
+                            onClick={() => {
+                                props.setPage(i)
+                            }}
+                        >
+                            <a>{i}</a>
+                        </li>
+                    )
+                } else if (i == 1 || i == props.maxPages) {
+                    children.push(
+                        <li
+                            key={i}
+                            className="waves-effect"
+                            onClick={() => {
+                                props.setPage(i)
+                            }}
+                        >
+                            <a>{i}</a>
+                        </li>
+                    )
+                }
+            }
+        }
+
+        return children
+    }
+
+    return (
+        <div>
+            <ul className={props.inside ? 'pagination-inside' : 'pagination'}>
+                <li
+                    className={
+                        props.currentPage == 1
+                            ? 'pagination-chevron-disabled'
+                            : 'pagination-chevron'
+                    }
+                    onClick={() => {
+                        if (props.currentPage != 1) {
+                            props.setPage(parseInt(props.currentPage) - 1)
+                        }
+                    }}
+                >
+                    <a>
+                        <i
+                            className="material-icons"
+                            style={{ lineHeight: 'inherit' }}
+                        >
+                            {'<'}
+                        </i>
+                    </a>
+                </li>
+                {props.currentPage > 4 ? (
+                    <span>
+                        <li
+                            className="waves-effect"
+                            onClick={() => {
+                                props.setPage(1)
+                            }}
+                        >
+                            <a>1</a>
+                        </li>
+                        <li className="disabled" style={{ marginLeft: '15px' }}>
+                            <a>...</a>
+                        </li>
+                    </span>
+                ) : (
+                    <span></span>
+                )}
+                {generateItems()}
+                {props.currentPage < props.maxPages - 3 ? (
+                    <span>
+                        <li
+                            className="disabled"
+                            style={{ marginRight: '15px' }}
+                        >
+                            <a>...</a>{' '}
+                        </li>
+                        <li
+                            className="waves-effect"
+                            onClick={() => {
+                                props.setPage(props.maxPages)
+                            }}
+                        >
+                            <a>{props.maxPages}</a>
+                        </li>
+                    </span>
+                ) : (
+                    <span></span>
+                )}
+                <li
+                    className={
+                        props.currentPage == props.maxPages
+                            ? 'pagination-chevron-disabled'
+                            : 'pagination-chevron'
+                    }
+                    onClick={() => {
+                        if (props.currentPage != props.maxPages) {
+                            props.setPage(parseInt(props.currentPage) + 1)
+                        }
+                    }}
+                >
+                    <a>
+                        <i
+                            className="material-icons"
+                            style={{ lineHeight: 'inherit' }}
+                        >
+                            {'>'}
+                        </i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    )
+}
+
+export { Pagination }
+```
+- utils/useDebounce.tsx
+```tsx
+import React, { useState, useEffect } from 'react'
+
+const useDebounce = (value: string, delay: number) => {
+    const [debouncedValue, setDebouncedValue] = useState(value)
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedValue(value)
+        }, delay)
+
+        return () => {
+            clearTimeout(handler)
+        }
+    }, [value])
+
+    return debouncedValue
+}
+
+export { useDebounce }
+```
