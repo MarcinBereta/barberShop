@@ -667,115 +667,7 @@ const productSchema = new mongoose.Schema({
 
 module.exports = mongoose.model("products", productSchema);
 ```
-#### Plik shop.model.js
-Ten kod definiuje moduł products, który eksportuje funkcje odpowiedzialne za operacje na kolekcji "products" w bazie danych.
-Funkcje dostępne w module products to:
 
-- `getAllProducts()`: Pobiera wszystkie produkty z kolekcji "products". Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (tablicą produktów) lub odrzuca się w przypadku błędu.
-
-- `getProductById(id)`: Pobiera produkt z kolekcji "products" na podstawie podanego identyfikatora (_id). Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (znalezionym produktem) lub odrzuca się w przypadku błędu.
-
-- `addProduct(product)`: Dodaje nowy produkt do kolekcji "products" na podstawie podanych danych produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (dodanym produktem) lub odrzuca się w przypadku błędu.
-
-- `updateProduct(product)`: Aktualizuje istniejący produkt w kolekcji "products" na podstawie podanych danych produktu. Aktualizacja odbywa się na podstawie identyfikatora (_id) produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (aktualizowanym produktem) lub odrzuca się w przypadku błędu.
-
-- `buyProduct(product)`: Aktualizuje ilość produktu w kolekcji "products" po zakupie. Aktualizacja odbywa się na podstawie identyfikatora (_id) produktu. Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (zaktualizowanym produktem) lub odrzuca się w przypadku błędu.
-
-- `addProductToCustomer(product, customer)`: Dodaje informację o zakupionym produkcie przez klienta do kolekcji "customersProducts". Zwraca obietnicę, która rozwiązuje się z wynikiem operacji (dodanym rekordem) lub odrzuca się w przypadku błędu.
-
-```js
-var mongoUtil = require( './../mongoUtil' );
-let mongo = mongoUtil.getDb();
-
-const products = () => { }
-
-products.getAllProducts = () => {
-    return new Promise((resolve, reject) => {
-        mongo.collection("products").find({}).toArray(function(err, res) {
-            if (err) {
-                console.log(err)
-                reject(err)
-            };
-            resolve(result) ;
-        });
-    })
-}
-
-products.getProductById = (id) => {
-    return new Promise((resolve, reject) => {
-        mongo.collection('products').findOne({ _id: id }, (err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
-    })
-}
-
-products.addProduct = (product)=>{
-    return new Promise((resolve, reject) => {
-        mongo.collection('products').insertOne({
-            name: product.name,
-            price: product.price,
-            description: product.description,
-            image: product.image,
-            category: product.category,
-            quantity: product.quantity,
-        }, (err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
-    })
-}
-
-products.updateProduct = (product)=>{
-    return new Promise((resolve, reject) => {
-        mongo.collection('products').updateOne({
-            _id: product._id
-        }, {
-            $set: {
-                name: product.name,
-                price: product.price,
-                description: product.description,
-                image: product.image,
-                category: product.category,
-                quantity: product.quantity,
-            }
-        }, (err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
-    })
-}
-
-products.buyProduct = (product)=>{
-    return new Promise((resolve, reject) => {
-        mongo.collection('products').updateOne({
-            _id: product._id
-        }, {
-            $set: {
-                quantity: product.quantity,
-            }
-        }, (err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
-    })
-}
-
-products.addProductToCustomer = (product, customer)=>{
-    return new Promise((resolve, reject) => {
-        mongo.collection('customersProducts').insertOne({
-            customer: customer,
-            product: product,
-        }, (err, result) => {
-            if(err) reject(err)
-            resolve(result)
-        })
-    })
-}
-
-
-module.exports = products
-```
 #### Plik user.js
 Model ten definiuje schemat dla kolekcji "users" w bazie danych.
 Schemat zawiera pola takie jak:
@@ -963,23 +855,18 @@ exports.validateToken = async (req, res, next) => {
     }
     let decoded = "";
     console.log("Validating token...2");
-
     try {
         decoded = jwt.verify(token, "123qweascxzgwwegdsadqrgyeds");
     } catch (error) {
         return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });
     }
     console.log("Validating token...3");
-
     if (decoded.id) {
         console.log("Validating token...4");
-
         req.authenticatedId = decoded.id;
         next();
     } else {
-        return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });
-    }
-};
+        return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });;
 ```
 ## Opis frontendu
 Do implementacji frontendu użyliśmy frameworku NextJS. Z racji, iż najważniejsza część projektu polega na stworzeniu logiki w backendzie, frontend zostanie opisany ogólniej, często bez konkretnego tłumaczenia co robią poszczególne elementy.
