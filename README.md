@@ -7,6 +7,7 @@
 * [Uruchomienie aplikacji](#uruchomienie-aplikacji)
 * [Struktura projektu](#struktura-projektu)
 * [Opis backendu](#opis-backendu)
+* [Opis frontendu](#opis-frontendu)
 
 ## Skład grupy
 
