@@ -5,6 +5,7 @@
 * [Temat](#temat)
 * [Technologia](#technologia)
 * [Uruchomienie aplikacji](#uruchomienie-aplikacji)
+* [Struktura bazy danych](#struktura-bazy-danych)
 * [Struktura projektu](#struktura-projektu)
 * [Opis backendu](#opis-backendu)
 * [Opis frontendu](#opis-frontendu)
@@ -31,6 +32,23 @@ Jest to aplikacja pozwalająca użytkownikowi na zakup produktów, gdzie transak
 ## Uruchomienie aplikacji
 
 Aby uruchomić aplikację musimy z pomocą komendy `npm run dev` włączyć serwer a następnie aplikację.
+
+## Struktura bazy danych
+Nasza baza danych składa się z 3 kolekcji: histories, users oraz products.
+
+### products
+
+W tej kolekcji umieszczone są produkty z naszego sklepu. Każdy z nich ma przypisaną nazwę, cenę, dostępną ilość oraz kategorię.
+Wyróżniamy 4 kategorie: odżywki, szampony, olejki oraz maski.
+
+### histories
+
+W tej kolekcji przechowywane są informacje o zakupach dokonanych przez użytkowników. Zawiera datę zakupu, użytkownika który tego dokonał oraz tablicę z zakupami.
+
+### users
+
+W tej kolekcji są dane użytkowników takie jak nazwa użytkownika, email, prawa oraz zakodowane hasło, oraz koszyk użtkownika.
+
 
 ## Struktura projektu
 ### Katalog backend 
