@@ -36,21 +36,45 @@ Aby uruchomić aplikację musimy z pomocą komendy `npm run dev` włączyć serw
 ## Struktura bazy danych
 Nasza baza danych składa się z 3 kolekcji: histories, users oraz products.
 
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/databases.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+
 ### products
 
 W tej kolekcji umieszczone są produkty z naszego sklepu. Każdy z nich ma przypisaną nazwę, cenę, dostępną ilość oraz kategorię.
 Wyróżniamy 4 kategorie: odżywki, szampony, olejki oraz maski.
 
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/productsinbase.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+
 ### histories
 
 W tej kolekcji przechowywane są informacje o zakupach dokonanych przez użytkowników. Zawiera datę zakupu, użytkownika który tego dokonał oraz tablicę z zakupami.
+
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/history.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
 ### users
 
 W tej kolekcji są dane użytkowników takie jak nazwa użytkownika, email, prawa oraz zakodowane hasło, oraz koszyk użtkownika.
 
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/users.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
 ## Struktura projektu
+Katalog screens zawiera tylko i wyłącznie zrzuty ekranu wykorzystane w readme.md, nie stanowi on części naszej aplikacji.
 ### Katalog backend 
 Zawiera on implementację logiki projektu oraz bazy danych. Zawierają się w nim katalogi:
 
@@ -887,7 +911,44 @@ exports.validateToken = async (req, res, next) => {
         return res.status(200).send({ status: "error", err: "UNAUTHORIZED" });;
 ```
 ## Opis frontendu
-Do implementacji frontendu użyliśmy frameworku NextJS. Z racji, iż najważniejsza część projektu polega na stworzeniu logiki w backendzie, frontend zostanie opisany ogólniej, często bez konkretnego tłumaczenia co robią poszczególne elementy.
+Do implementacji frontendu użyliśmy frameworku NextJS. Z racji, iż najważniejsza część projektu polega na stworzeniu logiki w backendzie, frontend zostanie opisany ogólniej, często bez konkretnego tłumaczenia co robią poszczególne elementy. Zanim jednak przejdziemy do kodu warto zobaczyć jak wygląda nasza aplikacja, a dokładniej jej najważneijsze elementy czyli: strona startowa, logowanie, rejestracja oraz koszyk.
+
+#### Strona początkowa
+Na stronie startowej w naszej aplikacji możemy zobaczyć dostępne produkty. Zalogowany użytkownik może dodać je do koszyka, a następnie dokonać zakupu.
+
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/products.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  
+ #### Koszyk
+ W tutaj odbywa się proces zakupu przez użtkownika.
+ 
+ <img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/basket.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  
+ #### Logowanie 
+ W tym miejscu użytkownik może zalogować się na swoje konto, co pozwoli mu na dokonanie zakupów.
+ 
+ <img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/login.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+
+#### Rejestracja
+Tutaj nowy użtkownik może założyć swoje konto. Musi podać nazwę, maila oraz hasło. Następnie może logować się na swoje konto w celu dokonania zakupów.
+
+<img
+  src="https://github.com/MarcinBereta/barberShop/blob/main/screens/register.jpg"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+
 
 ### Katalog public
 
